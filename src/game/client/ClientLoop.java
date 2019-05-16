@@ -1,5 +1,6 @@
 package game.client;
 
+import game.world.Player;
 import game.world.World;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -7,17 +8,26 @@ import static org.lwjgl.glfw.GLFW.*;
 public class ClientLoop implements IInputHandler {
     private Renderer renderer;
     private World world;
+    private Player localPlayer;
     private ClientState state;
 
-    double x;
-    double y;
+    private Window window;
 
-    double lx;
-    double ly;
+    private double cx;
+    private double cy;
+    private double clx;
+    private double cly;
+    private double cdx;
+    private double cdy;
+
+    private long lastTick;
 
     public ClientLoop() {
-        renderer = new Renderer(this);
+        window = new Window();
+        window.setInputCallback(this);
+        renderer = new Renderer(this, window);
         world = new World();
+        localPlayer = new Player(this);
 
         renderer.init();
     }
@@ -29,16 +39,40 @@ public class ClientLoop implements IInputHandler {
     public void run() {
         while (shouldRun()) {
             renderer.invoke();
+            localPlayer.tick();
+
+            clearTick();
+            syncTime();
+        }
+    }
+
+    private void clearTick() {
+        clx = cx;
+        cly = cy;
+        cdx = 0;
+        cdy = 0;
+    }
+
+    private void syncTime() {
+        final long NS_PER_TICK = 10000000;
+
+        long current = System.nanoTime();
+        if (current - lastTick < NS_PER_TICK/20) {
+            long delay = NS_PER_TICK + lastTick - current;
+            try {
+                Thread.sleep(delay / 1000000, (int) (delay % 1000000));
+            } catch (InterruptedException ignored) {}
         }
     }
 
     @Override
     public void onCursorPos(double x, double y) {
-        lx = this.x;
-        ly = this.y;
-
-        this.x = x;
-        this.y = y;
+        clx = cx;
+        cly = cy;
+        cx = x;
+        cy = y;
+        cdx = cx - clx;
+        cdy = cy - cly;
     }
 
     @Override
@@ -55,11 +89,35 @@ public class ClientLoop implements IInputHandler {
         }
     }
 
+    public double getCursorDeltaX() {
+        return cdx;
+    }
+
+    public double getCursorDeltaY() {
+        return cdy;
+    }
+
     public World getWorld() {
         return world;
     }
 
     public void setWorld(World world) {
         this.world = world;
+    }
+
+    public Player getLocalPlayer() {
+        return localPlayer;
+    }
+
+    public void setLocalPlayer(Player localPlayer) {
+        this.localPlayer = localPlayer;
+    }
+
+    public Window getWindow() {
+        return window;
+    }
+
+    public void setWindow(Window window) {
+        this.window = window;
     }
 }

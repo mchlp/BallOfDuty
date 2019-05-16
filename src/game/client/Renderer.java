@@ -6,12 +6,10 @@ public class Renderer {
     private ClientLoop loop;
     private Window window;
 
-    public Renderer(ClientLoop loop) {
+    public Renderer(ClientLoop loop, Window window) {
         this.loop = loop;
 
-        window = new Window();
-        window.setInputCallback(loop);
-
+        this.window = window;
         window.setVisible(true);
     }
 
@@ -28,7 +26,6 @@ public class Renderer {
     public void init() {
         window.makeGLContextCurrent();
         glEnable(GL_DEPTH_TEST);
-        glTranslated(0, 0, -15);
     }
 
     public void invoke() {
@@ -41,33 +38,14 @@ public class Renderer {
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        System.out.println(windowsize.getAspectRatio());
         perspective(100, windowsize.getAspectRatio(), 0.1, 100);
 
-        double dx = loop.x - loop.lx;
-        double dy = loop.y - loop.ly;
-        loop.lx = loop.x;
-        loop.ly = loop.y;
-
-        double len = Math.hypot(dx, dy);
-        System.out.println("len = " + len);
-
         glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        loop.getLocalPlayer().applyCamera();
 
-        if(len > 1e-9) {
-            double[] mat = new double[16];
-            glGetDoublev(GL_MODELVIEW_MATRIX, mat);
-            glLoadIdentity();
-            glTranslated(0, 0, -15);
-            glRotated(len, -dy / len, -dx / len, 0);
-            glTranslated(0, 0, 15);
-            glMultMatrixd(mat);
-        }
-
-        //glRotated(loop.y / 10, 1, 0, 0);
-
+        glScaled(1, -1, 1);
         loop.getWorld().render();
-
 
         window.swapBuffers();
 

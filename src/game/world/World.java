@@ -1,74 +1,33 @@
 package game.world;
 
+import game.client.Model;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class World {
-    public World() {
+    Model monkey;
 
+    public World() {
+        String str = null;
+        try {
+            str = new String(Files.readAllBytes(Paths.get("obj/monkey.obj")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        monkey = Model.loadOBJ(str);
     }
 
     public void render() {
         glPushMatrix();
 
-        glBegin(GL_QUADS);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        monkey.render();
 
-        glColor3d(1, 1, 1);
-
-        glColor3d(1, 1, 1);
-        glVertex3d(-1, -1, -1);
-        glColor3d(1, 0, 1);
-        glVertex3d(-1, 1, -1);
-        glColor3d(1, 1, 0);
-        glVertex3d(1, 1, -1);
-        glColor3d(0, 1, 1);
-        glVertex3d(1, -1, -1);
-
-        glColor3d(1, 1, 1);
-        glVertex3d(-1, -1, 1);
-        glColor3d(1, 0, 1);
-        glVertex3d(-1, 1, 1);
-        glColor3d(1, 1, 0);
-        glVertex3d(1, 1, 1);
-        glColor3d(0, 1, 1);
-        glVertex3d(1, -1, 1);
-
-        glColor3d(1, 1, 1);
-        glVertex3d(-1, -1, -1);
-        glColor3d(1, 0, 1);
-        glVertex3d(-1, -1, 1);
-        glColor3d(1, 1, 0);
-        glVertex3d(1, -1, 1);
-        glColor3d(0, 1, 1);
-        glVertex3d(1, -1, -1);
-
-        glColor3d(1, 1, 1);
-        glVertex3d(-1, 1, -1);
-        glColor3d(1, 0, 1);
-        glVertex3d(-1, 1, 1);
-        glColor3d(1, 1, 0);
-        glVertex3d(1, 1, 1);
-        glColor3d(0, 1, 1);
-        glVertex3d(1, 1, -1);
-
-        glColor3d(1, 1, 1);
-        glVertex3d(-1, -1, -1);
-        glColor3d(1, 0, 1);
-        glVertex3d(-1, -1, 1);
-        glColor3d(1, 1, 0);
-        glVertex3d(-1, 1, 1);
-        glColor3d(0, 1, 1);
-        glVertex3d(-1, 1, -1);
-
-        glColor3d(1, 1, 1);
-        glVertex3d(1, -1, -1);
-        glColor3d(1, 0, 1);
-        glVertex3d(1, -1, 1);
-        glColor3d(1, 1, 0);
-        glVertex3d(1, 1, 1);
-        glColor3d(0, 1, 1);
-        glVertex3d(1, 1, -1);
-
-        glEnd();
         glPopMatrix();
     }
 }

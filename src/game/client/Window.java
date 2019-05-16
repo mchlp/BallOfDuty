@@ -123,6 +123,10 @@ public class Window {
         });
     }
 
+    public int getKey(int key) {
+        return glfwGetKey(window, key);
+    }
+
     public void setCursorLock(boolean locked) {
         glfwSetInputMode(window, GLFW_CURSOR, locked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
