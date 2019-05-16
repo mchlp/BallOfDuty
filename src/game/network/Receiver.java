@@ -3,22 +3,26 @@ package game.network;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class Receiver {
 
-    public static final int BODY_BUFFER_LENGTH = 2048;
+    private static final int BODY_BUFFER_LENGTH = 2048;
 
-    protected ByteBuffer headerBuffer;
-    protected ByteBuffer bodyBuffer;
+    private ByteBuffer headerBuffer;
+    private ByteBuffer bodyBuffer;
 
-    public Receiver() {
+    public abstract ArrayList<Packet> checkForPackets() throws IOException;
+    public abstract void sendPacket(Packet sendPacket) throws IOException;
+
+    Receiver() {
         headerBuffer = ByteBuffer.allocate(Packet.HEADER_LENGTH_BYTES);
         bodyBuffer = ByteBuffer.allocate(BODY_BUFFER_LENGTH);
 
     }
 
-    public Packet attemptReadPacket(SocketChannel socketChannel) throws IOException {
+    Packet attemptReadPacket(SocketChannel socketChannel) throws IOException {
         int bytesRead = socketChannel.read(headerBuffer);
         if (bytesRead > 0) {
             headerBuffer.flip();
@@ -41,8 +45,10 @@ public abstract class Receiver {
         return null;
     }
 
-    public void send(SocketChannel socketChannel, Packet packet) throws IOException {
+    void send(SocketChannel socketChannel, Packet packet) throws IOException {
         ByteBuffer response = packet.getByteBuffer();
-        socketChannel.write(response);
+        while (response.hasRemaining()) {
+            socketChannel.write(response);
+        }
     }
 }

@@ -7,8 +7,10 @@
 package game.network;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientReceiver extends Receiver {
@@ -29,20 +31,24 @@ public class ClientReceiver extends Receiver {
         socketChannel.connect(new InetSocketAddress(ADDRESS, PORT));
         socketChannel.configureBlocking(false);
         isConnected = true;
+    }
 
-        Scanner scanner = new Scanner(System.in);
-
+    public ArrayList<Packet> checkForPackets() throws IOException {
+        ArrayList<Packet> packetList = new ArrayList<>();
         while (true) {
             Packet packet = attemptReadPacket(socketChannel);
-            if (packet != null) {
-                System.out.println("Received packet: " + packet.getBody());
+            if (packet == null) {
+                return packetList;
             }
+            packetList.add(packet);
+        }
+    }
 
-            if (scanner.hasNext()) {
-                Packet sendPacket = new Packet(scanner.nextLine());
-                System.out.println(sendPacket.getBody());
-                send(socketChannel, sendPacket);
-            }
+    public void sendPacket(Packet sendPacket) throws IOException {
+        if (isConnected) {
+            send(socketChannel, sendPacket);
+        } else {
+
         }
     }
 
