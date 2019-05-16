@@ -9,6 +9,41 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
+    public static class Dimension {
+        int width;
+        int height;
+
+        public Dimension(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        public Dimension() {
+            this(0, 0);
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public double getAspectRatio() {
+            return (double)width/height;
+        }
+
+    }
+
     private static boolean init = false;
 
     private static void glfwInit() {
@@ -32,10 +67,8 @@ public class Window {
         glfwInit();
 
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL)
@@ -76,7 +109,7 @@ public class Window {
         glfwSwapBuffers(window);
     }
 
-    public void setKeyCallback(IInputHandler callback) {
+    public void setInputCallback(IInputHandler callback) {
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             callback.onKey(key, scancode, action, mods);
         });
@@ -96,6 +129,14 @@ public class Window {
 
     public boolean getCursorLock() {
         return glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
+    }
+
+    public Dimension getWindowSize() {
+        int[] width = new int[1];
+        int[] height = new int[1];
+        glfwGetWindowSize(window, width, height);
+
+        return new Dimension(width[0], height[0]);
     }
 
     @Override
