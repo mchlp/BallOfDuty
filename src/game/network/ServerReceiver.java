@@ -8,7 +8,6 @@ package game.network;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -16,18 +15,15 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ServerReceiver {
+public class ServerReceiver extends Receiver {
     private static final int PORT = 9100;
 
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
-    private ByteBuffer buffer;
-
 
     public ServerReceiver() throws IOException {
         selector = Selector.open();
         serverSocketChannel = ServerSocketChannel.open();
-        buffer = ByteBuffer.allocate(2048);
     }
 
     private void openChannel() throws IOException, ClassNotFoundException {
@@ -51,17 +47,17 @@ public class ServerReceiver {
                 iterator.remove();
             }
         }
-
     }
 
-    private void process(SelectionKey key) throws IOException, ClassNotFoundException {
+    private void process(SelectionKey key) throws IOException {
+        System.out.println("Process.");
         SocketChannel client = (SocketChannel) key.channel();
-        client.read(buffer);
-        System.out.println("Packet received " + new String(buffer.array()));
-
-        ByteBuffer response = ByteBuffer.wrap("Received".getBytes());
-        client.write(response);
-        buffer.clear();
+        Packet packet = attemptReadPacket(client);
+        System.out.println(packet);
+        if (packet != null) {
+            System.out.println("Packet received: " + packet.getBody());
+            send(client, new Packet("Received Message."));
+        }
     }
 
     private void register(Selector selector, ServerSocketChannel serverSocketChannel) throws IOException {

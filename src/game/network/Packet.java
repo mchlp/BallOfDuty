@@ -6,16 +6,28 @@
 
 package game.network;
 
-import java.io.Serializable;
+import java.nio.ByteBuffer;
 
-public class Packet implements Serializable {
-    private String text;
+public class Packet {
 
-    public String getText() {
-        return text;
+    public static final int HEADER_LENGTH_BYTES = Integer.BYTES;
+
+    private String body;
+
+    public Packet(String body) {
+        this.body = body;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public String getBody() {
+        return body;
+    }
+
+    public ByteBuffer getByteBuffer() {
+        byte[] msgBytes = body.getBytes();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(msgBytes.length + HEADER_LENGTH_BYTES);
+        byteBuffer.putInt(msgBytes.length);
+        byteBuffer.put(msgBytes);
+        byteBuffer.flip();
+        return byteBuffer;
     }
 }
