@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.glTexCoord2dv;
 import static org.lwjgl.opengl.GL11.glVertex3d;
 
 public class ModelUV {
-    double u, v;
+    public double u, v;
 
     public ModelUV(double u, double v) {
         this.u = u;
