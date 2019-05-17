@@ -7,11 +7,9 @@
 package game.network;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ClientReceiver extends Receiver {
 
@@ -21,14 +19,14 @@ public class ClientReceiver extends Receiver {
     private boolean isConnected = false;
     private SocketChannel socketChannel;
 
-    public ClientReceiver() throws IOException {
+    public ClientReceiver(String address, int port) throws IOException {
         super();
         socketChannel = SocketChannel.open();
-        openChannel();
+        openChannel(address, port);
     }
 
-    private void openChannel() throws IOException {
-        socketChannel.connect(new InetSocketAddress(ADDRESS, PORT));
+    private void openChannel(String address, int port) throws IOException {
+        socketChannel.connect(new InetSocketAddress(address, port));
         socketChannel.configureBlocking(false);
         isConnected = true;
     }
@@ -44,16 +42,29 @@ public class ClientReceiver extends Receiver {
         }
     }
 
-    public void sendPacket(Packet sendPacket) throws IOException {
+    public void sendPacket(Packet sendPacket) throws IOException, SocketNotConnectedException {
         if (isConnected) {
             send(socketChannel, sendPacket);
         } else {
-
+            throw new SocketNotConnectedException();
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        ClientReceiver clientReceiver = new ClientReceiver();
+    public static void main(String[] args) throws IOException, SocketNotConnectedException {
+        ClientReceiver clientReceiver = new ClientReceiver(ADDRESS, PORT);
+        while (true) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            clientReceiver.sendPacket(new Packet("Tester"));
+            ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
+
+            for (Packet packet : receivedPackets) {
+                System.out.println("Packet received: " + packet);
+            }
+        }
     }
 
 }

@@ -30,4 +30,9 @@ public class Packet {
         byteBuffer.flip();
         return byteBuffer;
     }
+
+    @Override
+    public String toString() {
+        return getBody();
+    }
 }

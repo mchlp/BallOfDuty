@@ -3,7 +3,6 @@ package game.network;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class Receiver {
@@ -12,9 +11,6 @@ public abstract class Receiver {
 
     private ByteBuffer headerBuffer;
     private ByteBuffer bodyBuffer;
-
-    public abstract ArrayList<Packet> checkForPackets() throws IOException;
-    public abstract void sendPacket(Packet sendPacket) throws IOException;
 
     Receiver() {
         headerBuffer = ByteBuffer.allocate(Packet.HEADER_LENGTH_BYTES);
