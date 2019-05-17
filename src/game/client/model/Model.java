@@ -129,4 +129,24 @@ public class Model {
     public void finalize() {
         glDeleteLists(displayList, 1);
     }
+
+    public ArrayList<ModelVertex> getVerticies() {
+        return verticies;
+    }
+
+    public ArrayList<ModelFace> getFaces() {
+        return faces;
+    }
+
+    public ArrayList<ModelUV> getUvs() {
+        return uvs;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
 }

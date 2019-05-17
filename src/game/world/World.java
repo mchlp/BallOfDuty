@@ -5,16 +5,24 @@ import game.client.model.Model;
 import java.io.File;
 
 public class World {
-    Model test;
+    private Model model;
 
     public World() {
     }
 
     public void init(){
-        test = Model.loadOBJ(new File("obj/test.obj"), new File("obj/terrain.png"));
+        model = Model.loadOBJ(new File("obj/model.obj"), new File("obj/terrain.png"));
     }
 
     public void render() {
-        test.render();
+        model.render();
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 }

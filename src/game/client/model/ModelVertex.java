@@ -1,5 +1,7 @@
 package game.client.model;
 
+import game.vec.Vec3;
+
 import static org.lwjgl.opengl.GL11.glVertex3d;
 
 public class ModelVertex {
@@ -42,5 +44,9 @@ public class ModelVertex {
 
     public void glVertex() {
         glVertex3d(x, y, z);
+    }
+
+    public Vec3 toVec3() {
+        return new Vec3(x, y, z);
     }
 }

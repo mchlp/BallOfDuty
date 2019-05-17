@@ -44,6 +44,8 @@ public class ClientLoop implements IInputHandler {
             renderer.invoke();
             localPlayer.tick();
 
+            window.swapBuffers(); // TODO: move back to Renderer.invoke()
+
             clearTick();
             syncTime();
         }

@@ -48,8 +48,6 @@ public class Renderer {
         glScaled(1, -1, 1);
         loop.getWorld().render();
 
-        window.swapBuffers();
-
         Window.pollEvents();
     }
 
