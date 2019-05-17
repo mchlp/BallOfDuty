@@ -1,7 +1,6 @@
 package game.client.model;
 
 import static org.lwjgl.opengl.GL11.glTexCoord2dv;
-import static org.lwjgl.opengl.GL11.glVertex3d;
 
 public class ModelUV {
     public double u, v;

@@ -1,13 +1,10 @@
 package game.client;
 
-import game.client.model.Texture;
 import game.world.Player;
 import game.world.World;
 
-import java.io.File;
-import java.io.IOException;
-
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
 public class ClientLoop implements IInputHandler {
     private Renderer renderer;
