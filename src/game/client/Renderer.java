@@ -25,11 +25,12 @@ public class Renderer {
 
     public void init() {
         window.makeGLContextCurrent();
-        glEnable(GL_DEPTH_TEST);
     }
 
     public void invoke() {
         window.makeGLContextCurrent();
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_2D);
 
         Window.Dimension windowsize = window.getWindowSize();
 

@@ -1,7 +1,11 @@
 package game.client;
 
+import game.client.model.Texture;
 import game.world.Player;
 import game.world.World;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -37,6 +41,8 @@ public class ClientLoop implements IInputHandler {
     }
 
     public void run() {
+        world.init();
+
         while (shouldRun()) {
             renderer.invoke();
             localPlayer.tick();

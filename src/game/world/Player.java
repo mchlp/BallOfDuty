@@ -64,11 +64,11 @@ public class Player implements ITickable {
     }
 
     public void setPitch(double pitch) {
-        this.pitch = Math.min(Math.max(pitch, -180), 180);
+        this.pitch = Math.min(Math.max(pitch, -90), 90);
     }
 
     public void addPitch(double pitch) {
-        this.pitch = Math.min(Math.max(this.pitch + pitch, -180), 180);
+        this.pitch = Math.min(Math.max(this.pitch + pitch, -90), 90);
     }
 
     public double getYaw() {
@@ -88,8 +88,8 @@ public class Player implements ITickable {
         double cdx = loop.getCursorDeltaX();
         double cdy = loop.getCursorDeltaY();
         if (loop.getWindow().getCursorLock()) {
-            if (Math.abs(cdx) > 0) addYaw(-cdx / 5);
-            if (Math.abs(cdy) > 0) addPitch(-cdy / 5);
+            if (Math.abs(cdx) > 0) addYaw(-cdx / 2);
+            if (Math.abs(cdy) > 0) addPitch(-cdy / 2);
         }
 
         if (loop.getWindow().getKey(GLFW_KEY_W) == GLFW_PRESS) {
