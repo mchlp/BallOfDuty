@@ -15,6 +15,8 @@ public class Model {
 
     private Texture texture;
 
+    private int displayList;
+
     private Model() {
         this.verticies = new ArrayList<>();
         this.faces = new ArrayList<>();
@@ -23,7 +25,12 @@ public class Model {
 
     public void render() {
         texture.bind();
+        glCallList(displayList);
+    }
 
+    private void buildList() {
+        displayList = glGenLists(1);
+        glNewList(displayList, GL_COMPILE);
         glBegin(GL_TRIANGLES);
 
         for (ModelFace face : faces) {
@@ -31,6 +38,7 @@ public class Model {
         }
 
         glEnd();
+        glEndList();
     }
 
     public static Model loadOBJ(File objFile, File textureFile) {
@@ -70,6 +78,8 @@ public class Model {
                 makeFace(model, parts);
             }
         }
+
+        model.buildList();
 
         return model;
     }
@@ -114,5 +124,10 @@ public class Model {
         }
 
         model.faces.add(face);
+    }
+
+    @Override
+    public void finalize() {
+        glDeleteLists(displayList, 1);
     }
 }
