@@ -20,20 +20,19 @@ import java.util.Set;
 import java.util.UUID;
 
 public class ServerReceiver extends Receiver {
-    private static final int PORT = 9100;
-
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
     private HashMap<String, Queue<Packet>> allClientPacketQueue;
 
-    public ServerReceiver() throws IOException {
+    public ServerReceiver(int port) throws IOException {
         allClientPacketQueue = new HashMap<>();
         selector = Selector.open();
         serverSocketChannel = ServerSocketChannel.open();
+        openChannel(port);
     }
 
-    private void openChannel() throws IOException {
-        serverSocketChannel.bind(new InetSocketAddress("localhost", PORT));
+    private void openChannel(int port) throws IOException {
+        serverSocketChannel.bind(new InetSocketAddress("localhost", port));
         serverSocketChannel.configureBlocking(false);
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         System.out.println("Opened server socket...");
@@ -93,10 +92,5 @@ public class ServerReceiver extends Receiver {
             Packet packet = clientQueue.dequeue();
             send((SocketChannel) key.channel(), packet);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        ServerReceiver server = new ServerReceiver();
-        server.openChannel();
     }
 }
