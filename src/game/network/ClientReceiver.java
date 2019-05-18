@@ -29,6 +29,7 @@ public class ClientReceiver extends Receiver {
         socketChannel.connect(new InetSocketAddress(address, port));
         socketChannel.configureBlocking(false);
         isConnected = true;
+        System.out.format("Connected to server at %s:%d\n", address, port);
     }
 
     public ArrayList<Packet> checkForPackets() throws IOException {
@@ -58,7 +59,7 @@ public class ClientReceiver extends Receiver {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            clientReceiver.sendPacket(new Packet("Tester"));
+            clientReceiver.sendPacket(new Packet(PacketType.PLAYER_SHOOT, "Tester"));
             ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
 
             for (Packet packet : receivedPackets) {

@@ -11,11 +11,18 @@ import java.nio.ByteBuffer;
 public class Packet {
 
     public static final int HEADER_LENGTH_BYTES = Integer.BYTES;
+    public static final int TYPE_LENGTH_BYTES = Integer.BYTES;
 
     private String body;
+    private PacketType type;
 
-    public Packet(String body) {
+    public Packet(PacketType type, String body) {
+        this.type = type;
         this.body = body;
+    }
+
+    public PacketType getType() {
+        return type;
     }
 
     public String getBody() {
@@ -24,8 +31,9 @@ public class Packet {
 
     public ByteBuffer getByteBuffer() {
         byte[] msgBytes = body.getBytes();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(msgBytes.length + HEADER_LENGTH_BYTES);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(msgBytes.length + HEADER_LENGTH_BYTES + TYPE_LENGTH_BYTES);
         byteBuffer.putInt(msgBytes.length);
+        byteBuffer.putInt(type.code);
         byteBuffer.put(msgBytes);
         byteBuffer.flip();
         return byteBuffer;
@@ -33,6 +41,6 @@ public class Packet {
 
     @Override
     public String toString() {
-        return getBody();
+        return getType() + " - " + getBody();
     }
 }

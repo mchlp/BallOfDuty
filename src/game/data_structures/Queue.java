@@ -2,23 +2,28 @@ package game.data_structures;
 
 public class Queue<T> {
 
+    Element<T> frontElement;
     Element<T> backElement;
 
-    public void enqueue(T value) {
-        Element<T> newElement = new Element();
-        newElement.value = value;
+    public void enqueue(T num) {
+        Element<T> newElement = new Element<>();
+        newElement.value = num;
 
-        if (backElement != null) {
-            newElement.next = backElement;
+        if (frontElement != null) {
+            newElement.next = frontElement;
+            frontElement.before = newElement;
         }
 
-        backElement = newElement;
+        if (backElement == null) {
+            backElement = newElement;
+        }
+        frontElement = newElement;
     }
 
     public T dequeue() {
-        Element<T> popElement = backElement;
-        backElement = backElement.next;
-        return popElement.value;
+        Element popElement = backElement;
+        backElement = backElement.before;
+        return (T) popElement.value;
     }
 
     public T peek() {
@@ -31,8 +36,8 @@ public class Queue<T> {
         } else {
             int sizeCount = 1;
             Element cur = backElement;
-            while (cur.next != null) {
-                cur = cur.next;
+            while (cur.before != null) {
+                cur = cur.before;
                 sizeCount++;
             }
             return sizeCount;

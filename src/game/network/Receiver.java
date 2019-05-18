@@ -10,10 +10,12 @@ public abstract class Receiver {
     private static final int BODY_BUFFER_LENGTH = 2048;
 
     private ByteBuffer headerBuffer;
+    private ByteBuffer typeBuffer;
     private ByteBuffer bodyBuffer;
 
     Receiver() {
         headerBuffer = ByteBuffer.allocate(Packet.HEADER_LENGTH_BYTES);
+        typeBuffer = ByteBuffer.allocate(Packet.TYPE_LENGTH_BYTES);
         bodyBuffer = ByteBuffer.allocate(BODY_BUFFER_LENGTH);
 
     }
@@ -24,6 +26,12 @@ public abstract class Receiver {
             headerBuffer.flip();
             int bodyLength = headerBuffer.getInt();
             headerBuffer.clear();
+
+            socketChannel.read(typeBuffer);
+            typeBuffer.flip();
+            int type = typeBuffer.getInt();
+            typeBuffer.clear();
+
             int bytesLeft = bodyLength;
             StringBuilder body = new StringBuilder();
 
@@ -36,7 +44,7 @@ public abstract class Receiver {
                 bodyBuffer.clear();
             }
 
-            return new Packet(body.toString());
+            return new Packet(PacketType.getPacketType(type), body.toString());
         }
         return null;
     }
