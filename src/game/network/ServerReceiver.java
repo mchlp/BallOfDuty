@@ -8,6 +8,8 @@ package game.network;
 
 import game.data_structures.Pair;
 import game.data_structures.Queue;
+import game.network.packets.Packet;
+import game.network.packets.PacketType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -51,7 +53,6 @@ public class ServerReceiver extends Receiver {
                 return;
             }
             incomingPacketQueue.enqueue(new Pair<>((String) key.attachment(), packet));
-            enqueueOutgoingPacket((String) key.attachment(), new Packet(PacketType.TEXT, "Received Message"));
         }
     }
 

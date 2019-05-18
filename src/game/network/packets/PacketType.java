@@ -1,4 +1,4 @@
-package game.network;
+package game.network.packets;
 
 public enum PacketType {
     PLAYER_MOVE(1),

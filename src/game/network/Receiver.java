@@ -1,5 +1,10 @@
 package game.network;
 
+import game.network.packets.Packet;
+import game.network.packets.PacketBody;
+import game.network.packets.PacketBodyCoordinate;
+import game.network.packets.PacketType;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -29,7 +34,7 @@ public abstract class Receiver {
 
             socketChannel.read(typeBuffer);
             typeBuffer.flip();
-            int type = typeBuffer.getInt();
+            PacketType type = PacketType.getPacketType(typeBuffer.getInt());
             typeBuffer.clear();
 
             int bytesLeft = bodyLength;
@@ -44,7 +49,17 @@ public abstract class Receiver {
                 bodyBuffer.clear();
             }
 
-            return new Packet(PacketType.getPacketType(type), body.toString());
+            PacketBody packetBody;
+            switch (type) {
+                case PLAYER_MOVE:
+                    packetBody = PacketBodyCoordinate.fromSerialized(body.toString());
+                    break;
+                default:
+                    packetBody = PacketBody.fromSerialized(body.toString());
+            }
+
+            Packet receivedPacket = new Packet(type, packetBody);
+            return receivedPacket;
         }
         return null;
     }

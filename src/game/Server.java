@@ -1,8 +1,9 @@
 package game;
 
 import game.data_structures.Pair;
-import game.network.Packet;
+import game.network.packets.Packet;
 import game.network.ServerReceiver;
+import game.network.packets.PacketType;
 
 import java.io.IOException;
 
@@ -24,6 +25,7 @@ public class Server {
             while (serverReceiver.hasNextIncomingPacket()) {
                 Pair<String, Packet> incoming = serverReceiver.popNextIncomingPacket();
                 System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
+                serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT, "Received Message"));
             }
         }
     }
