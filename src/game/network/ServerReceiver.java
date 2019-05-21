@@ -9,7 +9,6 @@ package game.network;
 import game.data_structures.Pair;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
-import game.network.packets.PacketType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,16 +20,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class ServerReceiver extends Receiver {
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
     private HashMap<String, Queue<Packet>> outgoingPacketQueueMap;
     private Queue<Pair<String, Packet>> incomingPacketQueue;
-    private boolean runLoop;
 
-    public ServerReceiver(int port) throws IOException {
-        runLoop = true;
+    private Function<String, Void> registerClientCallback;
+    private Function<String, Void> deregisterClientCallback;
+
+    public ServerReceiver(int port, Function<String, Void> registerClientCallback, Function<String, Void> deregisterClientCallback) throws IOException {
+        this.registerClientCallback = registerClientCallback;
+        this.deregisterClientCallback = deregisterClientCallback;
+
         outgoingPacketQueueMap = new HashMap<>();
         incomingPacketQueue = new Queue<>();
         selector = Selector.open();
@@ -66,6 +70,14 @@ public class ServerReceiver extends Receiver {
         System.out.println(client);
         client.configureBlocking(false);
         client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, socketId);
+
+        registerClientCallback.apply(socketId);
+    }
+
+    private void deregister(SelectionKey key) throws IOException {
+        SocketChannel client = (SocketChannel) key.channel();
+        client.close();
+        deregisterClientCallback.apply((String) key.attachment());
     }
 
     private void sendQueuedPackets(SelectionKey key) throws IOException {

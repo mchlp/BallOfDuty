@@ -4,8 +4,10 @@ import game.data_structures.Pair;
 import game.network.packets.Packet;
 import game.network.ServerReceiver;
 import game.network.packets.PacketType;
+import game.server.ClientProfile;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class Server {
 
@@ -13,9 +15,11 @@ public class Server {
 
     private boolean keepRunning;
     private ServerReceiver serverReceiver;
+    private HashMap<String, ClientProfile> clientList;
 
     public Server(int port) throws IOException {
-        serverReceiver = new ServerReceiver(port);
+        clientList = new HashMap<>();
+        serverReceiver = new ServerReceiver(port, this::registerClient, this::deregisterClient);
         keepRunning = true;
     }
 
@@ -28,6 +32,15 @@ public class Server {
                 serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT, "Received Message"));
             }
         }
+    }
+
+    private void registerClient(String cliendId) {
+        ClientProfile newClient = new ClientProfile();
+        clientList.put(cliendId, newClient);
+    }
+
+    private void deregisterClient(String clientId) {
+        clientList.remove(clientId);
     }
 
     public static void main(String[] args) throws IOException {
