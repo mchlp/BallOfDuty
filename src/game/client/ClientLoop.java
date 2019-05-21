@@ -1,5 +1,6 @@
 package game.client;
 
+import game.util.TimeSync;
 import game.world.Player;
 import game.world.World;
 
@@ -21,7 +22,7 @@ public class ClientLoop implements IInputHandler {
     private double cdx;
     private double cdy;
 
-    private long lastTick;
+    private TimeSync sync;
 
     public ClientLoop() {
         window = new Window();
@@ -29,6 +30,7 @@ public class ClientLoop implements IInputHandler {
         renderer = new Renderer(this, window);
         world = new World();
         localPlayer = new Player(this);
+        sync = new TimeSync(10000000);
 
         renderer.init();
     }
@@ -47,7 +49,7 @@ public class ClientLoop implements IInputHandler {
             window.swapBuffers(); // TODO: move back to Renderer.invoke()
 
             clearTick();
-            syncTime();
+            sync.sync();
         }
     }
 
@@ -56,18 +58,6 @@ public class ClientLoop implements IInputHandler {
         cly = cy;
         cdx = 0;
         cdy = 0;
-    }
-
-    private void syncTime() {
-        final long NS_PER_TICK = 10000000;
-
-        long current = System.nanoTime();
-        if (current - lastTick < NS_PER_TICK/20) {
-            long delay = NS_PER_TICK + lastTick - current;
-            try {
-                Thread.sleep(delay / 1000000, (int) (delay % 1000000));
-            } catch (InterruptedException ignored) {}
-        }
     }
 
     @Override
