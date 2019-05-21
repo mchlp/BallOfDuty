@@ -28,7 +28,7 @@ public class Server {
             serverReceiver.sendAndRecieve();
             while (serverReceiver.hasNextIncomingPacket()) {
                 Pair<String, Packet> incoming = serverReceiver.popNextIncomingPacket();
-                System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
+                //System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
                 serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT, "Received Message"));
             }
         }
@@ -37,10 +37,12 @@ public class Server {
     private void registerClient(String cliendId) {
         ClientProfile newClient = new ClientProfile();
         clientList.put(cliendId, newClient);
+        System.out.println("Register client " + cliendId);
     }
 
     private void deregisterClient(String clientId) {
         clientList.remove(clientId);
+        System.out.println("Deregister client " + clientId);
     }
 
     public static void main(String[] args) throws IOException {

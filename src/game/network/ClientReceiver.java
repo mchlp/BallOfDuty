@@ -20,42 +20,73 @@ public class ClientReceiver extends Receiver {
     private static final String ADDRESS = "localhost";
     private static final int PORT = 9100;
 
-    private boolean isConnected = false;
+    private boolean isConnected;
     private SocketChannel socketChannel;
+    private String address;
+    private int port;
 
     public ClientReceiver(String address, int port) throws IOException {
         super();
+        this.address = address;
+        this.port = port;
         socketChannel = SocketChannel.open();
-        openChannel(address, port);
+        try {
+            openChannel();
+            isConnected = true;
+        } catch (IOException e) {
+            isConnected = false;
+        }
     }
 
-    private void openChannel(String address, int port) throws IOException {
+    private void openChannel() throws IOException {
         socketChannel.connect(new InetSocketAddress(address, port));
         socketChannel.configureBlocking(false);
         isConnected = true;
         System.out.format("Connected to server at %s:%d\n", address, port);
     }
 
-    public ArrayList<Packet> checkForPackets() throws IOException {
+    public ArrayList<Packet> checkForPackets() {
         ArrayList<Packet> packetList = new ArrayList<>();
-        while (true) {
-            Packet packet = attemptReadPacket(socketChannel);
-            if (packet == null) {
-                return packetList;
+        while (isConnected) {
+            Packet packet = null;
+            try {
+                packet = attemptReadPacket(socketChannel);
+                if (packet == null) {
+                    break;
+                }
+                packetList.add(packet);
+            } catch (IOException e) {
+                isConnected = false;
+                break;
             }
-            packetList.add(packet);
         }
+        return packetList;
     }
 
-    public void sendPacket(Packet sendPacket) throws IOException, SocketNotConnectedException {
+    public void sendPacket(Packet sendPacket) {
         if (isConnected) {
-            send(socketChannel, sendPacket);
-        } else {
-            throw new SocketNotConnectedException();
+            try {
+                send(socketChannel, sendPacket);
+            } catch (IOException e) {
+                isConnected = false;
+            }
         }
     }
 
-    public static void main(String[] args) throws IOException, SocketNotConnectedException {
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public boolean attemptReconnect() {
+        try {
+            openChannel();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void main(String[] args) throws IOException {
         ClientReceiver clientReceiver = new ClientReceiver(ADDRESS, PORT);
         while (true) {
             try {
