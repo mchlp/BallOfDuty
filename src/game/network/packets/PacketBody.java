@@ -1,23 +1,22 @@
 package game.network.packets;
 
-public class PacketBody {
+public abstract class PacketBody {
+
+    public static final PacketBody EMPTY_BODY = new PacketBody() {
+        @Override
+        protected void setSerializedBody() {
+            return;
+        }
+
+        @Override
+        public String toString() {
+            return "";
+        }
+    };
 
     protected String serializedBody;
 
-    public PacketBody(String text) {
-        serializedBody = text;
-    }
+    protected abstract void setSerializedBody();
 
-    public PacketBody() {
-
-    }
-
-    public static PacketBody fromSerialized(String serializedForm) {
-        return new PacketBody(serializedForm);
-    }
-
-    @Override
-    public String toString() {
-        return serializedBody;
-    }
+    public abstract String toString();
 }

@@ -9,12 +9,17 @@ public class PacketBodyCoordinate extends PacketBody {
         super();
         this.x = x;
         this.y = y;
-        this.serializedBody = x + "," + y;
+        setSerializedBody();
     }
 
     public static PacketBodyCoordinate fromSerialized(String serializedForm) {
         String[] split = serializedForm.split(",");
         return new PacketBodyCoordinate(Double.parseDouble(split[0]), Double.parseDouble(split[1]));
+    }
+
+    @Override
+    protected void setSerializedBody() {
+        this.serializedBody = x + "," + y;
     }
 
     @Override

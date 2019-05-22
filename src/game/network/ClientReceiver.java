@@ -7,6 +7,7 @@
 package game.network;
 
 import game.network.packets.Packet;
+import game.network.packets.PacketBody;
 import game.network.packets.PacketBodyCoordinate;
 import game.network.packets.PacketType;
 
@@ -94,12 +95,14 @@ public class ClientReceiver extends Receiver {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            clientReceiver.sendPacket(new Packet(PacketType.PLAYER_MOVE, new PacketBodyCoordinate(1, 5)));
+            clientReceiver.sendPacket(new Packet(PacketType.PLAYER_HEARTBEAT, PacketBody.EMPTY_BODY));
             ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
 
             for (Packet packet : receivedPackets) {
                 System.out.println("Packet received: " + packet);
             }
+
+            System.out.println("Connection status: " + clientReceiver.isConnected());
         }
     }
 

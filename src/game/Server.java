@@ -5,6 +5,7 @@ import game.network.packets.Packet;
 import game.network.ServerReceiver;
 import game.network.packets.PacketType;
 import game.server.ClientProfile;
+import game.util.TimeSync;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,11 +17,13 @@ public class Server {
     private boolean keepRunning;
     private ServerReceiver serverReceiver;
     private HashMap<String, ClientProfile> clientList;
+    private TimeSync timeSync;
 
     public Server(int port) throws IOException {
         clientList = new HashMap<>();
         serverReceiver = new ServerReceiver(port, this::registerClient, this::deregisterClient);
         keepRunning = true;
+        timeSync = new TimeSync(10_000_000);
     }
 
     public void startLoop() throws IOException {
@@ -31,6 +34,7 @@ public class Server {
                 //System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
                 serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT, "Received Message"));
             }
+            timeSync.sync();
         }
     }
 
