@@ -49,17 +49,14 @@ public abstract class Receiver {
                 bodyBuffer.clear();
             }
 
-            PacketBody packetBody;
+            PacketBody packetBody = null;
             switch (type) {
                 case PLAYER_MOVE:
                     packetBody = PacketBodyCoordinate.fromSerialized(body.toString());
                     break;
-                default:
-                    packetBody = PacketBody.fromSerialized(body.toString());
             }
 
-            Packet receivedPacket = new Packet(type, packetBody);
-            return receivedPacket;
+            return new Packet(type, packetBody);
         }
         return null;
     }

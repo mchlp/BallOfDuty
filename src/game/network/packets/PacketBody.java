@@ -3,6 +3,7 @@ package game.network.packets;
 public abstract class PacketBody {
 
     public static final PacketBody EMPTY_BODY = new PacketBody() {
+
         @Override
         protected void setSerializedBody() {
             return;
@@ -13,6 +14,10 @@ public abstract class PacketBody {
             return "";
         }
     };
+
+    protected PacketBody() {
+        serializedBody = "";
+    }
 
     protected String serializedBody;
 

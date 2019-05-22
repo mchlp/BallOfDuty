@@ -16,10 +16,6 @@ public class Packet {
     public final PacketBody body;
     public final PacketType type;
 
-    public Packet(PacketType type, String stringBody) {
-        this(type, new PacketBody(stringBody));
-    }
-
     public Packet(PacketType type, PacketBody body) throws IllegalPacketBodyException {
         this.type = type;
 

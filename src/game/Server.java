@@ -3,6 +3,8 @@ package game;
 import game.data_structures.Pair;
 import game.network.packets.Packet;
 import game.network.ServerReceiver;
+import game.network.packets.PacketBody;
+import game.network.packets.PacketBodyText;
 import game.network.packets.PacketType;
 import game.server.ClientProfile;
 import game.util.TimeSync;
@@ -32,7 +34,10 @@ public class Server {
             while (serverReceiver.hasNextIncomingPacket()) {
                 Pair<String, Packet> incoming = serverReceiver.popNextIncomingPacket();
                 //System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
-                serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT, "Received Message"));
+                serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT,  new PacketBodyText("Received Message")));
+            }
+            for (String clientId : clientList.keySet()) {
+                serverReceiver.enqueueOutgoingPacket(clientId, new Packet(PacketType.SERVER_HEARTBEAT, PacketBody.EMPTY_BODY));
             }
             timeSync.sync();
         }
