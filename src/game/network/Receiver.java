@@ -12,6 +12,8 @@ import java.util.Arrays;
 
 public abstract class Receiver {
 
+    public static final int HEARTBEAT_TIMEOUT = 30 * 1000;
+
     private static final int BODY_BUFFER_LENGTH = 2048;
 
     private ByteBuffer headerBuffer;

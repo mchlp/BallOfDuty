@@ -8,7 +8,6 @@ package game.network;
 
 import game.network.packets.Packet;
 import game.network.packets.PacketBody;
-import game.network.packets.PacketBodyCoordinate;
 import game.network.packets.PacketType;
 
 import java.io.IOException;
@@ -21,7 +20,6 @@ public class ClientReceiver extends Receiver {
     private static final String ADDRESS = "localhost";
     private static final int PORT = 9100;
 
-    private boolean isConnected;
     private SocketChannel socketChannel;
     private String address;
     private int port;
@@ -31,24 +29,18 @@ public class ClientReceiver extends Receiver {
         this.address = address;
         this.port = port;
         socketChannel = SocketChannel.open();
-        try {
-            openChannel();
-            isConnected = true;
-        } catch (IOException e) {
-            isConnected = false;
-        }
+        openChannel();
     }
 
     private void openChannel() throws IOException {
         socketChannel.connect(new InetSocketAddress(address, port));
         socketChannel.configureBlocking(false);
-        isConnected = true;
         System.out.format("Connected to server at %s:%d\n", address, port);
     }
 
     public ArrayList<Packet> checkForPackets() {
         ArrayList<Packet> packetList = new ArrayList<>();
-        while (isConnected) {
+        while (socketChannel.isConnected()) {
             Packet packet = null;
             try {
                 packet = attemptReadPacket(socketChannel);
@@ -57,7 +49,6 @@ public class ClientReceiver extends Receiver {
                 }
                 packetList.add(packet);
             } catch (IOException e) {
-                isConnected = false;
                 break;
             }
         }
@@ -65,17 +56,16 @@ public class ClientReceiver extends Receiver {
     }
 
     public void sendPacket(Packet sendPacket) {
-        if (isConnected) {
+        if (socketChannel.isConnected()) {
             try {
                 send(socketChannel, sendPacket);
-            } catch (IOException e) {
-                isConnected = false;
+            } catch (IOException ignored) {
             }
         }
     }
 
     public boolean isConnected() {
-        return isConnected;
+        return socketChannel.isConnected();
     }
 
     public boolean attemptReconnect() {
