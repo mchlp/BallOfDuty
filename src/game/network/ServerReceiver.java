@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class ServerReceiver extends Receiver {
+
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
     private HashMap<String, Queue<Packet>> outgoingPacketQueueMap;

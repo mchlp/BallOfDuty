@@ -14,12 +14,15 @@ import java.util.HashMap;
 
 public class Server {
 
+    public static final int TIME_PER_HEARTBEAT = 2 * 1000;
+
     private static final int PORT = 9100;
 
     private boolean keepRunning;
     private ServerReceiver serverReceiver;
     private HashMap<String, ClientProfile> clientList;
     private TimeSync timeSync;
+    private long lastHeartbeat;
 
     public Server(int port) throws IOException {
         clientList = new HashMap<>();
@@ -36,8 +39,12 @@ public class Server {
                 //System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
                 serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT,  new PacketBodyText("Received Message")));
             }
-            for (String clientId : clientList.keySet()) {
-                serverReceiver.enqueueOutgoingPacket(clientId, new Packet(PacketType.SERVER_HEARTBEAT, PacketBody.EMPTY_BODY));
+
+            if (System.currentTimeMillis() - lastHeartbeat > TIME_PER_HEARTBEAT) {
+                for (String clientId : clientList.keySet()) {
+                    serverReceiver.enqueueOutgoingPacket(clientId, new Packet(PacketType.SERVER_HEARTBEAT, PacketBody.EMPTY_BODY));
+                }
+                lastHeartbeat = System.currentTimeMillis();
             }
             timeSync.sync();
         }

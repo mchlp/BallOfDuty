@@ -32,10 +32,14 @@ public class ClientReceiver extends Receiver {
         openChannel();
     }
 
-    private void openChannel() throws IOException {
-        socketChannel.connect(new InetSocketAddress(address, port));
-        socketChannel.configureBlocking(false);
-        System.out.format("Connected to server at %s:%d\n", address, port);
+    private void openChannel() {
+        try {
+            socketChannel.connect(new InetSocketAddress(address, port));
+            socketChannel.configureBlocking(false);
+            System.out.format("Connected to server at %s:%d\n", address, port);
+        } catch (IOException e) {
+            System.out.println("Could not connect to server.");
+        }
     }
 
     public ArrayList<Packet> checkForPackets() {
@@ -69,12 +73,8 @@ public class ClientReceiver extends Receiver {
     }
 
     public boolean attemptReconnect() {
-        try {
-            openChannel();
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
+        openChannel();
+        return isConnected();
     }
 
     public static void main(String[] args) throws IOException {
