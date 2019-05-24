@@ -1,68 +1,97 @@
 package game;
 
-import game.data_structures.Pair;
-import game.network.packets.Packet;
-import game.network.ServerReceiver;
-import game.network.packets.PacketBody;
-import game.network.packets.PacketBodyText;
-import game.network.packets.PacketType;
 import game.server.ClientProfile;
-import game.util.TimeSync;
+import game.server.ServerProcessor;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Arrays;
 
-public class Server {
-
-    public static final int TIME_PER_HEARTBEAT = 2 * 1000;
+public class Server extends Application {
 
     private static final int PORT = 9100;
 
-    private boolean keepRunning;
-    private ServerReceiver serverReceiver;
-    private HashMap<String, ClientProfile> clientList;
-    private TimeSync timeSync;
-    private long lastHeartbeat;
+    private static final String NO_CLIENTS_CONNECTED_STRING = "No connected clients.";
 
-    public Server(int port) throws IOException {
-        clientList = new HashMap<>();
-        serverReceiver = new ServerReceiver(port, this::registerClient, this::deregisterClient);
-        keepRunning = true;
-        timeSync = new TimeSync(10_000_000);
-    }
+    private long prevTime;
+    private ServerProcessor serverProcessor;
+    private ListView<String> clientListView;
+    private TextArea clientView;
 
-    public void startLoop() throws IOException {
-        while (keepRunning) {
-            serverReceiver.sendAndRecieve();
-            while (serverReceiver.hasNextIncomingPacket()) {
-                Pair<String, Packet> incoming = serverReceiver.popNextIncomingPacket();
-                //System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
-                serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.TEXT,  new PacketBodyText("Received Message")));
-            }
+    @Override
+    public void start(Stage primaryStage) {
 
-            if (System.currentTimeMillis() - lastHeartbeat > TIME_PER_HEARTBEAT) {
-                for (String clientId : clientList.keySet()) {
-                    serverReceiver.enqueueOutgoingPacket(clientId, new Packet(PacketType.SERVER_HEARTBEAT, PacketBody.EMPTY_BODY));
+        try {
+            serverProcessor = new ServerProcessor(PORT);
+
+            BorderPane root = new BorderPane();
+            clientListView = new ListView<>();
+            clientListView.setPrefWidth(320);
+            root.setLeft(clientListView);
+
+            clientView = new TextArea("No client selected.");
+            root.setCenter(clientView);
+
+            Scene scene = new Scene(root);
+
+            primaryStage.setTitle("Server GUI");
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+            primaryStage.show();
+
+            prevTime = System.nanoTime();
+            AnimationTimer animationTimer = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    double deltaTime = (now - prevTime) / 1E9;
+                    onUpdate(deltaTime);
+                    prevTime = now;
                 }
-                lastHeartbeat = System.currentTimeMillis();
-            }
-            timeSync.sync();
+            };
+
+            animationTimer.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void registerClient(String cliendId) {
-        ClientProfile newClient = new ClientProfile();
-        clientList.put(cliendId, newClient);
-        System.out.println("Register client " + cliendId);
-    }
+    private void onUpdate(double deltaTime) {
+        try {
+            serverProcessor.tick();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-    private void deregisterClient(String clientId) {
-        clientList.remove(clientId);
-        System.out.println("Deregister client " + clientId);
+        String[] clients = serverProcessor.getClients();
+        Arrays.sort(clients);
+        ObservableList<String> clientList;
+
+        if (clients.length > 0) {
+            clientList = FXCollections.observableArrayList(clients);
+        } else {
+            clientList = FXCollections.observableArrayList(NO_CLIENTS_CONNECTED_STRING);
+        }
+        clientListView.setItems(clientList);
+
+        String selected = clientListView.getSelectionModel().getSelectedItem();
+        if (selected == null || selected.equals(NO_CLIENTS_CONNECTED_STRING)) {
+            clientView.setText("No client selected.");
+        } else {
+            ClientProfile clientProfile = serverProcessor.getClientList().get(selected);
+            clientView.setText(clientProfile.toString());
+        }
     }
 
     public static void main(String[] args) throws IOException {
-        Server server = new Server(PORT);
-        server.startLoop();
+        launch(args);
     }
 }

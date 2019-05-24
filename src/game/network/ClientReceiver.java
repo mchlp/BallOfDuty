@@ -8,6 +8,7 @@ package game.network;
 
 import game.network.packets.Packet;
 import game.network.packets.PacketBody;
+import game.network.packets.PacketBodyCoordinate;
 import game.network.packets.PacketType;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class ClientReceiver extends Receiver {
 
     public ArrayList<Packet> checkForPackets() {
         ArrayList<Packet> packetList = new ArrayList<>();
-        while (socketChannel.isConnected()) {
+        while (isConnected()) {
             Packet packet = null;
             try {
                 packet = attemptReadPacket(socketChannel);
@@ -60,7 +61,7 @@ public class ClientReceiver extends Receiver {
     }
 
     public void sendPacket(Packet sendPacket) {
-        if (socketChannel.isConnected()) {
+        if (isConnected()) {
             try {
                 send(socketChannel, sendPacket);
             } catch (IOException ignored) {

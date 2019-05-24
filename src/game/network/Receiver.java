@@ -1,14 +1,12 @@
 package game.network;
 
-import game.network.packets.Packet;
-import game.network.packets.PacketBody;
-import game.network.packets.PacketBodyCoordinate;
-import game.network.packets.PacketType;
+import game.network.packets.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public abstract class Receiver {
 
@@ -53,6 +51,9 @@ public abstract class Receiver {
             switch (type) {
                 case PLAYER_MOVE:
                     packetBody = PacketBodyCoordinate.fromSerialized(body.toString());
+                    break;
+                case TEXT:
+                    packetBody = PacketBodyText.fromSerialized(body.toString());
                     break;
             }
 

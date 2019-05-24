@@ -24,6 +24,11 @@ public class Packet {
                 if (!(body instanceof PacketBodyCoordinate)) {
                     throw new IllegalPacketBodyException("PacketBodyCoordinate", PacketType.PLAYER_MOVE);
                 }
+                break;
+            case TEXT:
+                if (!(body instanceof PacketBodyText)) {
+                    throw new IllegalPacketBodyException("PacketBodyText", PacketType.TEXT);
+                }
         }
         this.body = body;
     }

@@ -9,7 +9,7 @@ package game.network;
 import game.data_structures.Pair;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
-import game.server.ClientIdCallback;
+import game.server.ClientProfile;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,28 +17,20 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class ServerReceiver extends Receiver {
 
+
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
-    private HashMap<String, Queue<Packet>> outgoingPacketQueueMap;
     private Queue<Pair<String, Packet>> incomingPacketQueue;
+    private HashMap<String, ClientProfile> clientList;
 
-    private ClientIdCallback registerClientCallback;
-    private ClientIdCallback deregisterClientCallback;
-
-    public ServerReceiver(int port, ClientIdCallback registerClientCallback, ClientIdCallback deregisterClientCallback) throws IOException {
-        this.registerClientCallback = registerClientCallback;
-        this.deregisterClientCallback = deregisterClientCallback;
-
-        outgoingPacketQueueMap = new HashMap<>();
-        incomingPacketQueue = new Queue<>();
+    public ServerReceiver(int port) throws IOException {
+        clientList = new HashMap<>();
         selector = Selector.open();
+        incomingPacketQueue = new Queue<>();
         serverSocketChannel = ServerSocketChannel.open();
         openChannel(port);
     }
@@ -57,39 +49,48 @@ public class ServerReceiver extends Receiver {
             if (packet == null) {
                 return;
             }
-            incomingPacketQueue.enqueue(new Pair<>((String) key.attachment(), packet));
+            String clientId = (String) key.attachment();
+            clientList.get(clientId).addReceivedPacketToHistory(packet);
+            incomingPacketQueue.enqueue(new Pair<>(clientId, packet));
         }
     }
 
     private void register(SelectionKey key, Selector selector, ServerSocketChannel serverSocketChannel) throws IOException {
         String socketId = UUID.randomUUID().toString();
         Queue<Packet> outgoingQueue = new Queue<>();
-        outgoingPacketQueueMap.put(socketId, outgoingQueue);
-
 
         SocketChannel client = serverSocketChannel.accept();
         client.configureBlocking(false);
         client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, socketId);
 
-        registerClientCallback.callback(socketId);
+        ClientProfile newClient = new ClientProfile(socketId, client.getRemoteAddress().toString());
+        clientList.put(socketId, newClient);
+
+        System.out.println("Register client " + socketId);
+
     }
 
     private void deregister(SelectionKey key) throws IOException {
         SocketChannel client = (SocketChannel) key.channel();
         client.close();
-        deregisterClientCallback.callback((String) key.attachment());
+        String clientId = (String) key.attachment();
+
+        clientList.remove(clientId);
+        System.out.println("Deregister client " + clientId);
     }
 
     private void sendQueuedPackets(SelectionKey key) throws IOException {
-        Queue<Packet> clientQueue = outgoingPacketQueueMap.get(key.attachment());
+        String clientId = (String) key.attachment();
+        Queue<Packet> clientQueue = clientList.get(clientId).getOutgoingQueue();
         while (!clientQueue.isEmpty()) {
             Packet packet = clientQueue.dequeue();
             send((SocketChannel) key.channel(), packet);
+            clientList.get(clientId).addSentPacketToHistory(packet);
         }
     }
 
     public void sendAndRecieve() throws IOException {
-        selector.select();
+        selector.selectNow();
         Set<SelectionKey> selectionKeys = selector.selectedKeys();
         Iterator<SelectionKey> iterator = selectionKeys.iterator();
         while (iterator.hasNext()) {
@@ -102,7 +103,7 @@ public class ServerReceiver extends Receiver {
                     enqueueIncomingPackets(key);
                 }
                 if (key.isWritable()) {
-                    if (!outgoingPacketQueueMap.get(key.attachment()).isEmpty()) {
+                    if (!clientList.get(key.attachment()).getOutgoingQueue().isEmpty()) {
                         sendQueuedPackets(key);
                     }
                 }
@@ -114,7 +115,7 @@ public class ServerReceiver extends Receiver {
     }
 
     public void enqueueOutgoingPacket(String clientId, Packet packet) throws IOException {
-        outgoingPacketQueueMap.get(clientId).enqueue(packet);
+        clientList.get(clientId).getOutgoingQueue().enqueue(packet);
     }
 
     public Pair<String, Packet> popNextIncomingPacket() {
@@ -123,5 +124,9 @@ public class ServerReceiver extends Receiver {
 
     public boolean hasNextIncomingPacket() {
         return !incomingPacketQueue.isEmpty();
+    }
+
+    public HashMap<String, ClientProfile> getClientList() {
+        return clientList;
     }
 }
