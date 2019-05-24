@@ -12,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.lwjgl.system.CallbackI;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,17 +22,20 @@ public class Server extends Application {
     private static final int PORT = 9100;
 
     private static final String NO_CLIENTS_CONNECTED_STRING = "No connected clients.";
+    private static final String NO_CLIENT_SELECTED_STRING = "No selected client.";
 
     private long prevTime;
     private ServerProcessor serverProcessor;
     private ListView<String> clientListView;
     private ClientView clientView;
+    private String selectedClient;
 
     @Override
     public void start(Stage primaryStage) {
 
         try {
             serverProcessor = new ServerProcessor(PORT);
+            selectedClient = NO_CLIENT_SELECTED_STRING;
 
             BorderPane root = new BorderPane();
             clientListView = new ListView<>();
@@ -84,11 +88,19 @@ public class Server extends Application {
         clientListView.setItems(clientList);
 
         String selected = clientListView.getSelectionModel().getSelectedItem();
-        if (selected == null || selected.equals(NO_CLIENTS_CONNECTED_STRING)) {
-            clientView.setClient(null);
-        } else {
-            clientView.setClient(serverProcessor.getClientList().get(selected));
+        if (selected == null) {
+            selected = NO_CLIENT_SELECTED_STRING;
         }
+        if (!selected.equals(selectedClient)) {
+            if (selected.equals(NO_CLIENTS_CONNECTED_STRING)) {
+                clientView.setClient(null);
+                selectedClient = NO_CLIENT_SELECTED_STRING;
+            } else {
+                clientView.setClient(serverProcessor.getClientList().get(selected));
+                selectedClient = selected;
+            }
+        }
+        clientView.tick();
     }
 
     public static void main(String[] args) throws IOException {

@@ -6,16 +6,17 @@ import java.util.Date;
 
 public class PacketHistoryElement {
 
-    private Date created;
-    private Packet packet;
+    public final long created;
+    public final Packet packet;
 
     public PacketHistoryElement(Packet packet) {
-        created = new Date(System.currentTimeMillis());
+        created = System.currentTimeMillis();
         this.packet = packet;
     }
 
     @Override
     public String toString() {
-        return created.toString() + " - " + packet.toString();
+        Date createdDate = new Date(created);
+        return createdDate.toString() + " - " + packet.toString();
     }
 }

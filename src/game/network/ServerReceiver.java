@@ -26,11 +26,13 @@ public class ServerReceiver extends Receiver {
     private ServerSocketChannel serverSocketChannel;
     private Queue<Pair<String, Packet>> incomingPacketQueue;
     private HashMap<String, ClientProfile> clientList;
+    private HashSet<String> kickQueue;
 
     public ServerReceiver(int port) throws IOException {
         clientList = new HashMap<>();
         selector = Selector.open();
         incomingPacketQueue = new Queue<>();
+        kickQueue = new HashSet<>();
         serverSocketChannel = ServerSocketChannel.open();
         openChannel(port);
     }
@@ -103,6 +105,9 @@ public class ServerReceiver extends Receiver {
                     enqueueIncomingPackets(key);
                 }
                 if (key.isWritable()) {
+                    if (kickQueue.contains(key.attachment())) {
+                        deregister(key);
+                    }
                     if (!clientList.get(key.attachment()).getOutgoingQueue().isEmpty()) {
                         sendQueuedPackets(key);
                     }
@@ -116,6 +121,10 @@ public class ServerReceiver extends Receiver {
 
     public void enqueueOutgoingPacket(String clientId, Packet packet) throws IOException {
         clientList.get(clientId).getOutgoingQueue().enqueue(packet);
+    }
+
+    public void kick(String clientId) {
+        kickQueue.add(clientId);
     }
 
     public Pair<String, Packet> popNextIncomingPacket() {

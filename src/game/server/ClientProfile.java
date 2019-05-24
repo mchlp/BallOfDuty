@@ -13,9 +13,9 @@ public class ClientProfile {
     public final String id;
     public final long joined;
     public final String ip;
-    private Queue<Packet> outgoingQueue;
-    private FixedSizeList<PacketHistoryElement> receivedPacketHistory;
-    private FixedSizeList<PacketHistoryElement> sentPacketHistory;
+    public final Queue<Packet> outgoingQueue;
+    public final FixedSizeList<PacketHistoryElement> receivedPacketHistory;
+    public final FixedSizeList<PacketHistoryElement> sentPacketHistory;
 
 
     public ClientProfile(String id, String ip) {

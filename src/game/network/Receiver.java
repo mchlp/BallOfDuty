@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public abstract class Receiver {
 
@@ -54,6 +53,10 @@ public abstract class Receiver {
                     break;
                 case TEXT:
                     packetBody = PacketBodyText.fromSerialized(body.toString());
+                    break;
+                case PLAYER_HEARTBEAT:
+                case SERVER_HEARTBEAT:
+                    packetBody = PacketBody.EMPTY_BODY;
                     break;
             }
 

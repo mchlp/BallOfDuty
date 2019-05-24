@@ -8,7 +8,6 @@ package game.network;
 
 import game.network.packets.Packet;
 import game.network.packets.PacketBody;
-import game.network.packets.PacketBodyCoordinate;
 import game.network.packets.PacketType;
 
 import java.io.IOException;

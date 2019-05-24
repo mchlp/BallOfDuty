@@ -6,12 +6,12 @@ public class FixedSizeList<T> {
     private int size;
     private int limit;
     private Queue<T> queue;
-    
+
     public FixedSizeList(int limit) {
         super();
         this.limit = limit;
         this.size = 0;
-        this.queue = new Queue<T>();
+        this.queue = new Queue<>();
     }
 
     public void add(T element) {
@@ -20,6 +20,10 @@ public class FixedSizeList<T> {
             queue.backElement = queue.backElement.before;
         }
         queue.enqueue(element);
+    }
+
+    public T getTopElement() {
+        return queue.frontElement.value;
     }
 
     public ArrayList<T> getElements() {
