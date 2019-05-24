@@ -10,9 +10,9 @@ public class ClientProfile {
 
     private static final int PACKET_HISTORY_LENGTH = 1000;
 
-    private String id;
-    private long joined;
-    private String ip;
+    public final String id;
+    public final long joined;
+    public final String ip;
     private Queue<Packet> outgoingQueue;
     private FixedSizeList<PacketHistoryElement> receivedPacketHistory;
     private FixedSizeList<PacketHistoryElement> sentPacketHistory;
@@ -41,10 +41,7 @@ public class ClientProfile {
 
     @Override
     public String toString() {
-        Date joinedDate = new Date(joined);
-        String string = new String();
-        string += String.format("ID: %s\nJoined: %s\nIP: %s\n", id, joinedDate.toString(), ip);
-
+        String string = "";
         string += "\n";
         string += ("RECEIVED PACKET HISTORY\n");
 

@@ -2,6 +2,7 @@ package game;
 
 import game.server.ClientProfile;
 import game.server.ServerProcessor;
+import game.server.gui.ClientView;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -24,7 +25,7 @@ public class Server extends Application {
     private long prevTime;
     private ServerProcessor serverProcessor;
     private ListView<String> clientListView;
-    private TextArea clientView;
+    private ClientView clientView;
 
     @Override
     public void start(Stage primaryStage) {
@@ -37,7 +38,7 @@ public class Server extends Application {
             clientListView.setPrefWidth(320);
             root.setLeft(clientListView);
 
-            clientView = new TextArea("No client selected.");
+            clientView = new ClientView();
             root.setCenter(clientView);
 
             Scene scene = new Scene(root);
@@ -84,10 +85,9 @@ public class Server extends Application {
 
         String selected = clientListView.getSelectionModel().getSelectedItem();
         if (selected == null || selected.equals(NO_CLIENTS_CONNECTED_STRING)) {
-            clientView.setText("No client selected.");
+            clientView.setClient(null);
         } else {
-            ClientProfile clientProfile = serverProcessor.getClientList().get(selected);
-            clientView.setText(clientProfile.toString());
+            clientView.setClient(serverProcessor.getClientList().get(selected));
         }
     }
 
