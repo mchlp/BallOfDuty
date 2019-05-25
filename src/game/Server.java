@@ -1,6 +1,5 @@
 package game;
 
-import game.server.ClientProfile;
 import game.server.ServerProcessor;
 import game.server.gui.ClientView;
 import javafx.animation.AnimationTimer;
@@ -9,10 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.lwjgl.system.CallbackI;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,6 +27,10 @@ public class Server extends Application {
     private ClientView clientView;
     private String selectedClient;
 
+    public static void main(String[] args) throws IOException {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) {
 
@@ -42,7 +43,7 @@ public class Server extends Application {
             clientListView.setPrefWidth(320);
             root.setLeft(clientListView);
 
-            clientView = new ClientView();
+            clientView = new ClientView(serverProcessor);
             root.setCenter(clientView);
 
             Scene scene = new Scene(root);
@@ -101,9 +102,5 @@ public class Server extends Application {
             }
         }
         clientView.tick();
-    }
-
-    public static void main(String[] args) throws IOException {
-        launch(args);
     }
 }

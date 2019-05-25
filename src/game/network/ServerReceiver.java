@@ -74,6 +74,7 @@ public class ServerReceiver extends Receiver {
 
     private void deregister(SelectionKey key) throws IOException {
         SocketChannel client = (SocketChannel) key.channel();
+        key.cancel();
         client.close();
         String clientId = (String) key.attachment();
 
@@ -101,15 +102,16 @@ public class ServerReceiver extends Receiver {
                 if (key.isAcceptable()) {
                     register(key, selector, serverSocketChannel);
                 }
-                if (key.isReadable()) {
-                    enqueueIncomingPackets(key);
-                }
-                if (key.isWritable()) {
-                    if (kickQueue.contains(key.attachment())) {
-                        deregister(key);
+                if (clientList.containsKey(key.attachment()) && key.isValid()) {
+                    if (key.isReadable()) {
+                        enqueueIncomingPackets(key);
                     }
-                    if (!clientList.get(key.attachment()).getOutgoingQueue().isEmpty()) {
-                        sendQueuedPackets(key);
+                    if (key.isWritable()) {
+                        if (kickQueue.contains(key.attachment())) {
+                            deregister(key);
+                        } else if (!clientList.get(key.attachment()).getOutgoingQueue().isEmpty()) {
+                            sendQueuedPackets(key);
+                        }
                     }
                 }
             } catch (IOException e) {

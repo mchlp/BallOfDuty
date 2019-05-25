@@ -1,7 +1,6 @@
 package game.server.gui;
 
 import game.data_structures.FixedSizeList;
-import game.network.packets.Packet;
 import game.server.PacketHistoryElement;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;

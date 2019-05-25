@@ -23,6 +23,9 @@ public class FixedSizeList<T> {
     }
 
     public T getTopElement() {
+        if (queue.frontElement == null) {
+            return null;
+        }
         return queue.frontElement.value;
     }
 

@@ -17,35 +17,51 @@ import java.util.ArrayList;
 
 public class ClientReceiver extends Receiver {
 
+    public static final int TIME_PER_HEARTBEAT = 2 * 1000;
+
     private static final String ADDRESS = "localhost";
     private static final int PORT = 9100;
 
     private SocketChannel socketChannel;
     private String address;
     private int port;
+    private long lastHeartbeatSent;
+    private boolean isConnected;
 
     public ClientReceiver(String address, int port) throws IOException {
         super();
         this.address = address;
         this.port = port;
-        socketChannel = SocketChannel.open();
+        lastHeartbeatSent = 0;
+        isConnected = false;
         openChannel();
     }
 
     private void openChannel() {
+        isConnected = false;
         try {
+            if (socketChannel != null) {
+                socketChannel.close();
+            }
+            socketChannel = SocketChannel.open();
             socketChannel.connect(new InetSocketAddress(address, port));
             socketChannel.configureBlocking(false);
+            isConnected = true;
             System.out.format("Connected to server at %s:%d\n", address, port);
         } catch (IOException e) {
+            isConnected = false;
             System.out.println("Could not connect to server.");
         }
     }
 
     public ArrayList<Packet> checkForPackets() {
+        if (System.currentTimeMillis() - lastHeartbeatSent > TIME_PER_HEARTBEAT) {
+            sendPacket(new Packet(PacketType.PLAYER_HEARTBEAT, PacketBody.EMPTY_BODY));
+            lastHeartbeatSent = System.currentTimeMillis();
+        }
         ArrayList<Packet> packetList = new ArrayList<>();
         while (isConnected()) {
-            Packet packet = null;
+            Packet packet;
             try {
                 packet = attemptReadPacket(socketChannel);
                 if (packet == null) {
@@ -53,6 +69,7 @@ public class ClientReceiver extends Receiver {
                 }
                 packetList.add(packet);
             } catch (IOException e) {
+                isConnected = false;
                 break;
             }
         }
@@ -64,28 +81,26 @@ public class ClientReceiver extends Receiver {
             try {
                 send(socketChannel, sendPacket);
             } catch (IOException ignored) {
+                isConnected = false;
             }
         }
     }
 
     public boolean isConnected() {
-        return socketChannel.isConnected();
+        return isConnected;
     }
 
     public boolean attemptReconnect() {
         openChannel();
-        return isConnected();
+        return isConnected;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         ClientReceiver clientReceiver = new ClientReceiver(ADDRESS, PORT);
         while (true) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            clientReceiver.sendPacket(new Packet(PacketType.PLAYER_HEARTBEAT, PacketBody.EMPTY_BODY));
+
+            Thread.sleep(500);
+
             ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
 
             for (Packet packet : receivedPackets) {
@@ -93,6 +108,10 @@ public class ClientReceiver extends Receiver {
             }
 
             System.out.println("Connection status: " + clientReceiver.isConnected());
+
+            if (!clientReceiver.isConnected()) {
+                clientReceiver.attemptReconnect();
+            }
         }
     }
 

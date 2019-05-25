@@ -4,8 +4,6 @@ import game.data_structures.FixedSizeList;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
 
-import java.util.Date;
-
 public class ClientProfile {
 
     private static final int PACKET_HISTORY_LENGTH = 1000;
@@ -37,25 +35,5 @@ public class ClientProfile {
 
     public Queue<Packet> getOutgoingQueue() {
         return outgoingQueue;
-    }
-
-    @Override
-    public String toString() {
-        String string = "";
-        string += "\n";
-        string += ("RECEIVED PACKET HISTORY\n");
-
-        for (PacketHistoryElement packetHistoryElement : receivedPacketHistory.getElements()) {
-            string += packetHistoryElement.toString() + "\n";
-        }
-
-        string += "\n";
-        string += ("SENT PACKET HISTORY\n");
-
-        for (PacketHistoryElement packetHistoryElement : sentPacketHistory.getElements()) {
-            string += packetHistoryElement.toString() + "\n";
-        }
-
-        return string;
     }
 }

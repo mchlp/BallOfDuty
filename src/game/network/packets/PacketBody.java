@@ -14,12 +14,11 @@ public abstract class PacketBody {
             return "";
         }
     };
+    protected String serializedBody;
 
     protected PacketBody() {
         serializedBody = "";
     }
-
-    protected String serializedBody;
 
     protected abstract void setSerializedBody();
 

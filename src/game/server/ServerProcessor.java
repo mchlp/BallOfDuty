@@ -27,6 +27,9 @@ public class ServerProcessor {
         while (serverReceiver.hasNextIncomingPacket()) {
             Pair<String, Packet> incoming = serverReceiver.popNextIncomingPacket();
             System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
+
+            // Process packets
+
             Packet receivedPacket = new Packet(PacketType.TEXT, new PacketBodyText("Received Message"));
             serverReceiver.enqueueOutgoingPacket(incoming.first, receivedPacket);
         }
