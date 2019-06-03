@@ -82,8 +82,8 @@ public class Vec3 {
         Vec3 vec = this.clone();
 
         vec.x = y * other.z - z * other.y;
-        vec.y = x * other.z - z * other.x;
-        vec.z = y * other.x - x * other.y;
+        vec.y = z * other.x - x * other.z;
+        vec.z = x * other.y - y * other.x;
 
         return vec;
     }

@@ -39,13 +39,12 @@ public class Renderer {
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        perspective(100, windowsize.getAspectRatio(), 0.1, 100);
+        perspective(100, windowsize.getAspectRatio(), 0.1, 10000);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         loop.getLocalPlayer().applyCamera();
 
-        glScaled(1, -1, 1);
         loop.getWorld().render();
 
         Window.pollEvents();

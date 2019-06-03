@@ -12,17 +12,28 @@ public class Player implements ITickable {
     private double x, y, z;
     private double pitch, yaw;
     private double vx, vy, vz;
+    private double radius = 1;
+    private double speed = 0.05;
+    private boolean onGround;
     private ClientLoop loop;
 
     public Player(ClientLoop loop) {
         this.loop = loop;
-        z = 15;
     }
 
     public void applyCamera() {
         glRotated(pitch, 1, 0, 0);
         glRotated(yaw, 0, 1, 0);
-        glTranslated(-x, -y + 10, -z);
+        glScaled(1, -1, 1);
+        glTranslated(-x, -y, -z);
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
     public double getX() {
@@ -87,45 +98,53 @@ public class Player implements ITickable {
 
     @Override
     public void tick() {
-        double cdx = loop.getCursorDeltaX();
-        double cdy = loop.getCursorDeltaY();
-        if (loop.getWindow().getCursorLock()) {
-            if (Math.abs(cdx) > 0) addYaw(-cdx / 2);
-            if (Math.abs(cdy) > 0) addPitch(-cdy / 2);
-        }
-
-        if (loop.getWindow().getKey(GLFW_KEY_W) == GLFW_PRESS) {
-            addX(Math.sin(Math.toRadians(getYaw())) / 15);
-            addZ(-Math.cos(Math.toRadians(getYaw())) / 15);
-        }
-
-        if (loop.getWindow().getKey(GLFW_KEY_S) == GLFW_PRESS) {
-            addX(-Math.sin(Math.toRadians(getYaw())) / 15);
-            addZ(Math.cos(Math.toRadians(getYaw())) / 15);
-        }
-
-        if (loop.getWindow().getKey(GLFW_KEY_A) == GLFW_PRESS) {
-            addX(Math.cos(Math.toRadians(getYaw())) / 15);
-            addZ(Math.sin(Math.toRadians(getYaw())) / 15);
-        }
-
-        if (loop.getWindow().getKey(GLFW_KEY_D) == GLFW_PRESS) {
-            addX(-Math.cos(Math.toRadians(getYaw())) / 15);
-            addZ(-Math.sin(Math.toRadians(getYaw())) / 15);
-        }
-
-        if (loop.getWindow().getKey(GLFW_KEY_SPACE) == GLFW_PRESS && y == 0) {
-            vy = -0.15;
-        }
-
         x += vx;
         y += vy;
         z += vz;
 
-        vy += 0.01;
+        double cdx = loop.getCursorDeltaX();
+        double cdy = loop.getCursorDeltaY();
+        if (loop.getWindow().getCursorLock()) {
+            if (Math.abs(cdx) > 0) addYaw(-cdx);
+            if (Math.abs(cdy) > 0) addPitch(-cdy);
+        }
 
-        if (y > 0) {
-            y = 0;
+        if (loop.getWindow().getKey(GLFW_KEY_W) == GLFW_PRESS) {
+            vx += Math.sin(Math.toRadians(getYaw())) * speed;
+            vz -= Math.cos(Math.toRadians(getYaw())) * speed;
+        }
+
+        if (loop.getWindow().getKey(GLFW_KEY_S) == GLFW_PRESS) {
+            vx -= Math.sin(Math.toRadians(getYaw())) * speed;
+            vz += Math.cos(Math.toRadians(getYaw())) * speed;
+        }
+
+        if (loop.getWindow().getKey(GLFW_KEY_A) == GLFW_PRESS) {
+            vx += Math.cos(Math.toRadians(getYaw())) * speed;
+            vz += Math.sin(Math.toRadians(getYaw())) * speed;
+        }
+
+        if (loop.getWindow().getKey(GLFW_KEY_D) == GLFW_PRESS) {
+            vx -= Math.cos(Math.toRadians(getYaw())) * speed;
+            vz -= Math.sin(Math.toRadians(getYaw())) * speed;
+        }
+
+        if (loop.getWindow().getKey(GLFW_KEY_SPACE) == GLFW_PRESS && onGround) {
+            vy = 1;
+        }
+
+//        if (loop.getWindow().getKey(GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+//            vy -= speed;
+//        }
+
+        vx *= 0.9;
+        vy *= 0.9;
+        vz *= 0.9;
+
+        vy -= 0.05;
+
+        if (y < 0.6) {
+            y = 0.6;
             vy = 0;
         }
 
@@ -133,8 +152,10 @@ public class Player implements ITickable {
     }
 
     private void collide() {
+        onGround = false;
         Model model = loop.getWorld().getModel();
         Vec3 pos = new Vec3(x, y, z);
+        Vec3 vel = new Vec3(vx, vy, vz);
 
         glPointSize(10);
         glBegin(GL_POINTS);
@@ -148,19 +169,19 @@ public class Player implements ITickable {
 
             Vec3 normal = b.sub(a).cross(c.sub(a)).normalize();
 
-            Vec3 nearest = pos.sub(pos.sub(a).project(normal));
+            Vec3 nearest = pos.sub(pos.sub(a).project(normal)); // Nearest point on the plane to player center
 
-            Vec3 ab = closestPointOnLine(pos, a, b);
+            Vec3 ab = closestPointOnLine(pos, a, b); // Nearest point on a line segment to player center
             Vec3 ac = closestPointOnLine(pos, a, c);
             Vec3 bc = closestPointOnLine(pos, b, c);
 
-            double abm = pos.sub(ab).magnitudeSq();
+            double abm = pos.sub(ab).magnitudeSq(); // Distances to player (ab, ac, bc)
             double acm = pos.sub(ac).magnitudeSq();
             double bcm = pos.sub(bc).magnitudeSq();
 
             Vec3 closest;
 
-            if (abm <= acm && abm <= bcm) {
+            if (abm <= acm && abm <= bcm) { // Check which line has a point closest to player
                 closest = ab;
             } else if (acm <= abm && acm <= bcm) {
                 closest = ac;
@@ -168,35 +189,56 @@ public class Player implements ITickable {
                 closest = bc;
             }
 
-            double sa = b.sub(a).cross(pos.sub(a)).dot(normal);
+            double sa = b.sub(a).cross(pos.sub(a)).dot(normal); // Determine cross products
             double sb = c.sub(b).cross(pos.sub(b)).dot(normal);
             double sc = a.sub(c).cross(pos.sub(c)).dot(normal);
 
-            if ((sa < 0 && sb < 0 && sc < 0) || (sa > 0 || sb > 0 || sc > 0)) {
+            if ((sa < 0 && sb < 0 && sc < 0) || (sa > 0 && sb > 0 && sc > 0)) { // Use cross products to determine whether point is inside triangle
                 closest = nearest;
             }
 
-            glVertex3d(closest.x, closest.y + 0.05, closest.z);
-            System.out.println(nearest);
+            //System.out.println(pos.sub(closest).magnitude());
+            if (pos.sub(closest).magnitudeSq() < radius * radius) {
+//                System.out.println(closest);
+                pos = pos.sub(closest).normalize().mul(radius).add(closest);
+                vel = vel.sub(vel.project(pos.sub(closest)));
+                if(pos.sub(closest).normalize().y > 0.7) {
+                    onGround = true;
+                }
+            }
+
+            glVertex3d(a.x, a.y + 0.05, a.z);
+            glVertex3d(b.x, b.y + 0.05, b.z);
+            glVertex3d(c.x, c.y + 0.05, c.z);
+            glVertex3d(closest.x, closest.y, closest.z);
+            //System.out.println(nearest);
         }
 
         glColor3d(1, 1, 1);
         glEnd();
+
+        x = pos.x;
+        y = pos.y;
+        z = pos.z;
+
+        vx = vel.x;
+        vy = vel.y;
+        vz = vel.z;
     }
 
     private Vec3 closestPointOnLine(Vec3 point, Vec3 linea, Vec3 lineb) {
         Vec3 line = linea.sub(lineb);
 
-        Vec3 topoint = linea.sub(point);
-        if (line.dot(topoint) < 0) {
+        Vec3 frompoint = linea.sub(point);
+        if (line.dot(frompoint) < 0) {
             return linea;
         }
 
-        topoint = lineb.sub(point);
-        if (line.dot(topoint) > 0) {
+        frompoint = lineb.sub(point);
+        if (line.dot(frompoint) > 0) {
             return lineb;
         }
 
-        return point.sub(topoint.sub(topoint.project(line)));
+        return lineb.sub(frompoint.project(line));
     }
 }
