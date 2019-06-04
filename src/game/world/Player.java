@@ -5,6 +5,9 @@ import game.client.model.Model;
 import game.client.model.ModelFace;
 import game.vec.Vec3;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -148,11 +151,15 @@ public class Player implements ITickable {
             vy = 0;
         }
 
-        collide();
+        onGround = false;
+        for(int i = 0; i < 8; ++i) {
+            collide();
+        }
     }
 
     private void collide() {
-        onGround = false;
+        ArrayList<CollisionPlane> planes = new ArrayList<>();
+
         Model model = loop.getWorld().getModel();
         Vec3 pos = new Vec3(x, y, z);
         Vec3 vel = new Vec3(vx, vy, vz);
@@ -197,25 +204,33 @@ public class Player implements ITickable {
                 closest = nearest;
             }
 
-            //System.out.println(pos.sub(closest).magnitude());
-            if (pos.sub(closest).magnitudeSq() < radius * radius) {
-//                System.out.println(closest);
-                pos = pos.sub(closest).normalize().mul(radius).add(closest);
-                vel = vel.sub(vel.project(pos.sub(closest)));
-                if(pos.sub(closest).normalize().y > 0.7) {
-                    onGround = true;
-                }
-            }
+            planes.add(new CollisionPlane(closest, pos.sub(closest).magnitude()));
 
-            glVertex3d(a.x, a.y + 0.05, a.z);
-            glVertex3d(b.x, b.y + 0.05, b.z);
-            glVertex3d(c.x, c.y + 0.05, c.z);
             glVertex3d(closest.x, closest.y, closest.z);
-            //System.out.println(nearest);
         }
 
         glColor3d(1, 1, 1);
         glEnd();
+
+        Collections.sort(planes); // Sort these planes from closest to farthest, to prevent colliding with invisible edges
+
+        // Collide with the nearest plane first
+        for(CollisionPlane plane : planes) {
+            Vec3 closest = plane.closestPoint;
+            //System.out.println(pos.sub(closest).magnitude());
+            if (plane.distance < radius) {
+                Vec3 toPlayer = pos.sub(closest).normalize();
+//                System.out.println(closest);
+                pos = toPlayer.mul(radius - 1e-6).add(closest);
+                if(vel.dot(toPlayer) < 0) {
+                    vel = vel.sub(vel.project(pos.sub(closest)));
+                }
+                if(toPlayer.y > 0.7) {
+                    onGround = true;
+                }
+                break;
+            }
+        }
 
         x = pos.x;
         y = pos.y;
@@ -224,6 +239,18 @@ public class Player implements ITickable {
         vx = vel.x;
         vy = vel.y;
         vz = vel.z;
+    }
+
+    private class CollisionPlane implements Comparable<CollisionPlane> {
+        public Vec3 closestPoint;
+        public double distance;
+        public CollisionPlane(Vec3 closestPoint, double distance) {
+            this.closestPoint = closestPoint;
+            this.distance = distance;
+        }
+        public int compareTo(CollisionPlane other) {
+            return Double.compare(distance, other.distance);
+        }
     }
 
     private Vec3 closestPointOnLine(Vec3 point, Vec3 linea, Vec3 lineb) {
