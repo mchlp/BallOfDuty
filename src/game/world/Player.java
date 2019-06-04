@@ -164,10 +164,10 @@ public class Player implements ITickable {
         Vec3 pos = new Vec3(x, y, z);
         Vec3 vel = new Vec3(vx, vy, vz);
 
-        glPointSize(10);
-        glBegin(GL_POINTS);
+//        glPointSize(10);
+//        glBegin(GL_POINTS);
 
-        glColor3d(1, 0, 1);
+//        glColor3d(1, 0, 1);
 
         for (ModelFace face : model.getFaces()) {
             Vec3 a = face.a.toVec3();
@@ -206,11 +206,15 @@ public class Player implements ITickable {
 
             planes.add(new CollisionPlane(closest, pos.sub(closest).magnitude()));
 
-            glVertex3d(closest.x, closest.y, closest.z);
+//            glVertex3d(a.x, a.y + 0.05, a.z);
+//            glVertex3d(b.x, b.y + 0.05, b.z);
+//            glVertex3d(c.x, c.y + 0.05, c.z);
+//            glVertex3d(closest.x, closest.y, closest.z);
+            //System.out.println(nearest);
         }
 
-        glColor3d(1, 1, 1);
-        glEnd();
+//        glColor3d(1, 1, 1);
+//        glEnd();
 
         Collections.sort(planes); // Sort these planes from closest to farthest, to prevent colliding with invisible edges
 

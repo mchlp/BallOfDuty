@@ -46,6 +46,7 @@ public class Renderer {
         loop.getLocalPlayer().applyCamera();
 
         loop.getWorld().render();
+        HUD.render(loop.getLocalPlayer(), windowsize);
 
         Window.pollEvents();
     }
