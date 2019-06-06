@@ -51,6 +51,8 @@ public abstract class Receiver {
                 case PLAYER_MOVE:
                     packetBody = PacketBodyCoordinate.fromSerialized(body.toString());
                     break;
+                case PLAYER_RESPOND_JOIN:
+                    packetBody = PacketBodyText.fromSerialized(body.toString());
                 case TEXT:
                     packetBody = PacketBodyText.fromSerialized(body.toString());
                     break;

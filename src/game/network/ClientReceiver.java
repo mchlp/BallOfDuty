@@ -8,6 +8,7 @@ package game.network;
 
 import game.network.packets.Packet;
 import game.network.packets.PacketBody;
+import game.network.packets.PacketBodyCoordinate;
 import game.network.packets.PacketType;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class ClientReceiver extends Receiver {
     private int port;
     private long lastHeartbeatSent;
     private boolean isConnected;
+    private String clientId;
 
     public ClientReceiver(String address, int port) throws IOException {
         super();
@@ -46,8 +48,10 @@ public class ClientReceiver extends Receiver {
             socketChannel = SocketChannel.open();
             socketChannel.connect(new InetSocketAddress(address, port));
             socketChannel.configureBlocking(false);
+
             isConnected = true;
-            System.out.format("Connected to server at %s:%d\n", address, port);
+            sendPacket(new Packet(PacketType.PLAYER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
+
         } catch (IOException e) {
             isConnected = false;
             System.out.println("Could not connect to server.");
@@ -55,6 +59,15 @@ public class ClientReceiver extends Receiver {
     }
 
     public ArrayList<Packet> checkForPackets() {
+
+        if (!isConnected() && socketChannel.isConnected()) {
+            try {
+                socketChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (System.currentTimeMillis() - lastHeartbeatSent > TIME_PER_HEARTBEAT) {
             sendPacket(new Packet(PacketType.PLAYER_HEARTBEAT, PacketBody.EMPTY_BODY));
             lastHeartbeatSent = System.currentTimeMillis();
@@ -66,6 +79,14 @@ public class ClientReceiver extends Receiver {
                 packet = attemptReadPacket(socketChannel);
                 if (packet == null) {
                     break;
+                }
+                switch (packet.type) {
+                    case PLAYER_RESPOND_JOIN:
+                        clientId = packet.body.toString();
+                        break;
+                    case PLAYER_KICK:
+                        isConnected = false;
+                        break;
                 }
                 packetList.add(packet);
             } catch (IOException e) {
@@ -95,19 +116,24 @@ public class ClientReceiver extends Receiver {
         return isConnected;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
         ClientReceiver clientReceiver = new ClientReceiver(ADDRESS, PORT);
-        while (true) {
 
+        while (true) {
             Thread.sleep(500);
 
             ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
 
+            clientReceiver.sendPacket(new Packet(PacketType.PLAYER_MOVE,
+                    new PacketBodyCoordinate(clientReceiver.getClientId(), 10, 10, 10)));
+
             for (Packet packet : receivedPackets) {
                 System.out.println("Packet received: " + packet);
             }
-
-            System.out.println("Connection status: " + clientReceiver.isConnected());
 
             if (!clientReceiver.isConnected()) {
                 clientReceiver.attemptReconnect();

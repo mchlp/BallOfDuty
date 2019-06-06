@@ -29,6 +29,19 @@ public class ServerProcessor {
             System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
 
             // Process packets
+            switch (incoming.second.type) {
+                case PLAYER_MOVE:
+                    for (String player : serverReceiver.getClientList().keySet()) {
+                        if (!player.equals(incoming.first)) {
+                            serverReceiver.enqueueOutgoingPacket(player, incoming.second);
+                        }
+                    }
+                    break;
+                case PLAYER_REQUEST_JOIN:
+                    System.out.println(incoming.first);
+                    serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.PLAYER_RESPOND_JOIN,
+                            new PacketBodyText(incoming.first)));
+            }
 
             Packet receivedPacket = new Packet(PacketType.TEXT, new PacketBodyText("Received Message"));
             serverReceiver.enqueueOutgoingPacket(incoming.first, receivedPacket);
