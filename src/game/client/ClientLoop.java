@@ -15,14 +15,8 @@ public class ClientLoop implements IInputHandler {
 
     private Window window;
 
-    private double cx;
-    private double cy;
     private double clx;
     private double cly;
-    private double cdx;
-    private double cdy;
-
-    private TimeSync sync;
 
     public ClientLoop() {
         window = new Window();
@@ -30,7 +24,6 @@ public class ClientLoop implements IInputHandler {
         renderer = new Renderer(this, window);
         world = new World();
         localPlayer = new Player(this);
-        sync = new TimeSync(10000000);
 
         renderer.init();
     }
@@ -42,32 +35,36 @@ public class ClientLoop implements IInputHandler {
     public void run() {
         world.init();
 
+        new Thread(this::tick).start();
+        TimeSync sync = new TimeSync(6000000); // 60 fps
+
         while (shouldRun()) {
             renderer.invoke();
-            localPlayer.tick();
-
             window.swapBuffers(); // TODO: move back to Renderer.invoke()
-
-            clearTick();
+            Window.pollEvents();
             sync.sync();
         }
     }
 
-    private void clearTick() {
-        clx = cx;
-        cly = cy;
-        cdx = 0;
-        cdy = 0;
+    private void tick() {
+        TimeSync sync = new TimeSync(10000000); // 100 r/s
+        while (shouldRun()) {
+            this.localPlayer.tick();
+            sync.sync();
+        }
     }
 
     @Override
     public void onCursorPos(double x, double y) {
-        clx = cx;
-        cly = cy;
-        cx = x;
-        cy = y;
-        cdx = cx - clx;
-        cdy = cy - cly;
+        double cdx = x - clx;
+        double cdy = y - cly;
+        if (getWindow().getCursorLock()) {
+            if (Math.abs(cdx) > 0) getLocalPlayer().addYaw(-cdx/3);
+            if (Math.abs(cdy) > 0) getLocalPlayer().addPitch(-cdy/3);
+        }
+
+        clx = x;
+        cly = y;
     }
 
     @Override
@@ -82,14 +79,6 @@ public class ClientLoop implements IInputHandler {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             renderer.getWindow().setCursorLock(false);
         }
-    }
-
-    public double getCursorDeltaX() {
-        return cdx;
-    }
-
-    public double getCursorDeltaY() {
-        return cdy;
     }
 
     public World getWorld() {

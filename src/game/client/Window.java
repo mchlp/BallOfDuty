@@ -39,7 +39,7 @@ public class Window {
         }
 
         public double getAspectRatio() {
-            return (double)width/height;
+            return (double) width / height;
         }
 
     }

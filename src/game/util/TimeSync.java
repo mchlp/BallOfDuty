@@ -18,11 +18,14 @@ public class TimeSync {
 
     public void sync() {
         long current = System.nanoTime();
-        if (current - lastTick < ns_per_tick/20) {
+        if (current - lastTick < ns_per_tick * 19 / 20) {
             long delay = ns_per_tick + lastTick - current;
             try {
                 Thread.sleep(delay / 1000000, (int) (delay % 1000000));
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {
+            }
+        } else {
+            lastTick = System.nanoTime();
         }
     }
 }

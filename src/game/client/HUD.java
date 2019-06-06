@@ -14,12 +14,14 @@ public class HUD {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
         glColor3d(1, 1, 1);
         glBegin(GL_QUADS);
-        glVertex2d(windowsize.width / 2 - 10, windowsize.height / 2);
-        glVertex2d(windowsize.width / 2, windowsize.height / 2 + 10);
-        glVertex2d(windowsize.width / 2 + 10, windowsize.height / 2);
-        glVertex2d(windowsize.width / 2, windowsize.height / 2 - 10);
+        glVertex2d(windowsize.width / 2 - 10, windowsize.height / 2 - 10);
+        glVertex2d(windowsize.width / 2 + 10, windowsize.height / 2 - 10);
+        glVertex2d(windowsize.width / 2 + 10, windowsize.height / 2 + 10);
+        glVertex2d(windowsize.width / 2 - 10, windowsize.height / 2 + 10);
         glEnd();
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     }
 }

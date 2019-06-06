@@ -22,6 +22,7 @@ public class Player implements ITickable {
 
     public Player(ClientLoop loop) {
         this.loop = loop;
+        y = 5;
     }
 
     public void applyCamera() {
@@ -104,13 +105,6 @@ public class Player implements ITickable {
         x += vx;
         y += vy;
         z += vz;
-
-        double cdx = loop.getCursorDeltaX();
-        double cdy = loop.getCursorDeltaY();
-        if (loop.getWindow().getCursorLock()) {
-            if (Math.abs(cdx) > 0) addYaw(-cdx);
-            if (Math.abs(cdy) > 0) addPitch(-cdy);
-        }
 
         if (loop.getWindow().getKey(GLFW_KEY_W) == GLFW_PRESS) {
             vx += Math.sin(Math.toRadians(getYaw())) * speed;

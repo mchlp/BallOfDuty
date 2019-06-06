@@ -11,7 +11,7 @@ public class World {
     }
 
     public void init(){
-        model = Model.loadOBJ(new File("obj/model.obj"), new File("obj/terrain.png"));
+        model = Model.loadOBJ(new File("obj/map.obj"), new File("obj/terrain.png"));
     }
 
     public void render() {
