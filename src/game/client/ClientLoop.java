@@ -40,7 +40,6 @@ public class ClientLoop implements IInputHandler {
 
         while (shouldRun()) {
             renderer.invoke();
-            window.swapBuffers(); // TODO: move back to Renderer.invoke()
             Window.pollEvents();
             sync.sync();
         }

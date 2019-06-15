@@ -49,6 +49,7 @@ public class Renderer {
         HUD.render(loop.getLocalPlayer(), windowsize);
 
         Window.pollEvents();
+        window.swapBuffers();
     }
 
     public Window getWindow() {
