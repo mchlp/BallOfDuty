@@ -19,7 +19,7 @@ public class ClientLoop implements IInputHandler {
     private double cly;
 
     public ClientLoop() {
-        window = new Window();
+        window = new Window("Ball of Duty");
         window.setInputCallback(this);
         renderer = new Renderer(this, window);
         world = new World();
