@@ -49,7 +49,7 @@ public class ClientReceiver extends Receiver {
             socketChannel.configureBlocking(false);
 
             isConnected = true;
-            sendPacket(new Packet(PacketType.PLA'YER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
+            sendPacket(new Packet(PacketType.PLAYER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
 
         } catch (IOException e) {
             isConnected = false;
