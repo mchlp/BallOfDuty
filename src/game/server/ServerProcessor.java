@@ -53,8 +53,8 @@ public class ServerProcessor {
         }
 
         if (System.currentTimeMillis() - lastHeartbeat > TIME_PER_HEARTBEAT) {
-            for (String clientId : serverReceiver.getClientList().keySet()) {
-                serverReceiver.enqueueOutgoingPacket(clientId, new Packet(PacketType.SERVER_HEARTBEAT,
+            for (ClientProfile clientId : serverReceiver.getClientList().values()) {
+                serverReceiver.enqueueOutgoingPacket(clientId.id, new Packet(PacketType.SERVER_HEARTBEAT,
                         PacketBody.EMPTY_BODY));
             }
             lastHeartbeat = System.currentTimeMillis();

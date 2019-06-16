@@ -87,7 +87,9 @@ public class ClientReceiver extends Receiver {
                         isConnected = false;
                         break;
                 }
-                packetList.add(packet);
+                if (packet.type != PacketType.SERVER_HEARTBEAT) {
+                    packetList.add(packet);
+                }
             } catch (IOException e) {
                 isConnected = false;
                 break;
