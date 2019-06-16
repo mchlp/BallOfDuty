@@ -129,7 +129,7 @@ public class ClientReceiver extends Receiver {
             ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
 
             clientReceiver.sendPacket(new Packet(PacketType.PLAYER_MOVE,
-                    new PacketBodyCoordinate(clientReceiver.getClientId(), 10, 10, 10)));
+                    new PacketBodyCoordinate(clientReceiver.getClientId(), 10, 10, 10, 0, 0)));
 
             for (Packet packet : receivedPackets) {
                 System.out.println("Packet received: " + packet);

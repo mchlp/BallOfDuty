@@ -29,9 +29,7 @@ public class ServerProcessor {
             switch (incoming.second.type) {
                 case PLAYER_MOVE:
                     PacketBodyCoordinate packetBodyCoordinate = (PacketBodyCoordinate) incoming.second.body;
-                    serverReceiver.getClientList().get(incoming.first).position.x = packetBodyCoordinate.x;
-                    serverReceiver.getClientList().get(incoming.first).position.y = packetBodyCoordinate.y;
-                    serverReceiver.getClientList().get(incoming.first).position.z = packetBodyCoordinate.z;
+                    serverReceiver.getClientList().get(incoming.first).setPacketBodyCoordinate(packetBodyCoordinate);
 
                     for (String player : serverReceiver.getClientList().keySet()) {
                         if (!player.equals(incoming.first)) {
@@ -44,8 +42,7 @@ public class ServerProcessor {
                             new PacketBodyText(incoming.first)));
                     for (ClientProfile player : serverReceiver.getClientList().values()) {
                         serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.PLAYER_MOVE,
-                                new PacketBodyCoordinate(player.id, player.position.x, player.position.y,
-                                        player.position.z)));
+                                player.getPacketBodyCoordinate()));
                     }
             }
 

@@ -3,6 +3,7 @@ package game.server;
 import game.data_structures.FixedSizeList;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
+import game.network.packets.PacketBodyCoordinate;
 import game.vec.Vec3;
 
 public class ClientProfile {
@@ -10,7 +11,7 @@ public class ClientProfile {
     private static final int PACKET_HISTORY_LENGTH = 1000;
 
     public final String id;
-    public final Vec3 position;
+    private PacketBodyCoordinate packetBodyCoordinate;
     public final long joined;
     public final String ip;
     public final Queue<Packet> outgoingQueue;
@@ -20,7 +21,7 @@ public class ClientProfile {
 
     public ClientProfile(String id, String ip) {
         this.id = id;
-        this.position = new Vec3(0, 100, 0);
+        this.packetBodyCoordinate = new PacketBodyCoordinate(id, 0, 100, 0, 0, 0);
         this.joined = System.currentTimeMillis();
         this.ip = ip;
         outgoingQueue = new Queue<>();
@@ -30,6 +31,14 @@ public class ClientProfile {
 
     public void addReceivedPacketToHistory(Packet packet) {
         receivedPacketHistory.add(new PacketHistoryElement(packet));
+    }
+
+    public void setPacketBodyCoordinate(PacketBodyCoordinate packetBodyCoordinate) {
+        this.packetBodyCoordinate = packetBodyCoordinate;
+    }
+
+    public PacketBodyCoordinate getPacketBodyCoordinate() {
+        return packetBodyCoordinate;
     }
 
     public void addSentPacketToHistory(Packet packet) {
