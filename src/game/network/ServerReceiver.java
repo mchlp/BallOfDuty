@@ -9,6 +9,8 @@ package game.network;
 import game.data_structures.Pair;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
+import game.network.packets.PacketBodyText;
+import game.network.packets.PacketType;
 import game.server.ClientIDGenerator;
 import game.server.ClientProfile;
 
@@ -18,7 +20,10 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class ServerReceiver extends Receiver {
 
@@ -81,6 +86,13 @@ public class ServerReceiver extends Receiver {
         String clientId = (String) key.attachment();
 
         clientList.remove(clientId);
+
+        for (String player : clientList.keySet()) {
+            if (!player.equals(clientId)) {
+                enqueueOutgoingPacket(player, new Packet(PacketType.PLAYER_LEAVE, new PacketBodyText(clientId)));
+            }
+        }
+
         System.out.println("Deregister client " + clientId);
     }
 
