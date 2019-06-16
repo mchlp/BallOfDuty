@@ -20,6 +20,8 @@ public class Player implements ITickable {
     private boolean onGround;
     private ClientLoop loop;
 
+    private static int PLAYER_MODEL;
+
     public Player(ClientLoop loop) {
         this.loop = loop;
         y = 5;
@@ -242,10 +244,12 @@ public class Player implements ITickable {
     private class CollisionPlane implements Comparable<CollisionPlane> {
         public Vec3 closestPoint;
         public double distance;
+
         public CollisionPlane(Vec3 closestPoint, double distance) {
             this.closestPoint = closestPoint;
             this.distance = distance;
         }
+
         public int compareTo(CollisionPlane other) {
             return Double.compare(distance, other.distance);
         }
@@ -265,5 +269,55 @@ public class Player implements ITickable {
         }
 
         return lineb.sub(frompoint.project(line));
+    }
+
+    private static int genList() {
+        int displayList = glGenLists(1);
+        glNewList(displayList, GL_COMPILE);
+        glBegin(GL_TRIANGLES);
+
+        final int sectorCount = 20;
+        final int stackCount = 20;
+
+        double sectorStep = 2 * Math.PI / sectorCount;
+        double stackStep = Math.PI / stackCount;
+        double sectorAngle, stackAngle;
+
+        for (int i = 0; i <= stackCount; i++) {
+            stackAngle = Math.PI / 2 - i * stackStep;
+            double xy = Math.cos(stackAngle);
+            double z = Math.sin(stackAngle);
+
+            for (int j = 0; j <= sectorCount; ++j) {
+                sectorAngle = j * sectorStep;
+
+                double x = xy * Math.cos(sectorAngle);
+                double y = xy * Math.sin(sectorAngle);
+
+                glVertex3d(x, y, z);
+            }
+        }
+
+        glEnd();
+        glEndList();
+
+        return displayList;
+    }
+
+    public static void init() {
+        PLAYER_MODEL = genList();
+    }
+
+    public void render() {
+        glPushMatrix();
+
+        glTranslated(x, y, z);
+        glScaled(radius, radius, radius);
+        glRotated(yaw, 0, 1, 0);
+        glRotated(pitch, 1, 0, 0);
+
+        glCallList(PLAYER_MODEL);
+
+        glPopMatrix();
     }
 }

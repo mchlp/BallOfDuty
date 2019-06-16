@@ -2,11 +2,13 @@ package game.client;
 
 import game.client.model.Model;
 import game.network.ClientReceiver;
+import game.network.packets.*;
 import game.util.TimeSync;
 import game.world.Player;
 import game.world.World;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -49,7 +51,11 @@ public class ClientLoop implements IInputHandler {
                 glClear(GL_COLOR_BUFFER_BIT);
                 window.swapBuffers();
             } else {
-                renderer.invoke();
+                try {
+                    renderer.invoke();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             Window.pollEvents();
             sync.sync();
@@ -60,28 +66,60 @@ public class ClientLoop implements IInputHandler {
         TimeSync sync = new TimeSync(10000000); // 100 r/s
         while (shouldRun()) {
             if (receiver.isConnected()) {
-                this.world.tick();
-                sync.sync();
-            } else {
-                System.out.println("Disconnected");
-                this.world = null;
+                ArrayList<Packet> packets = receiver.checkForPackets();
 
-                while (!receiver.isConnected()) {
-                    receiver.attemptReconnect();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                for (Packet p : packets) {
+                    if (p.type == PacketType.PLAYER_MOVE) {
+                        PacketBodyCoordinate coords = (PacketBodyCoordinate) p.body;
+
+                        int playerid = Integer.parseInt(coords.player);
+                        Player player = world.obtainPlayer(playerid);
+                        player.setX(coords.x);
+                        player.setY(coords.y);
+                        player.setZ(coords.z);
+
+                        System.out.println("Received move for player id: " + playerid);
                     }
                 }
-                System.out.println("Connected");
 
-                World w = new World(this);
-                w.setLocalPlayer(new Player(this));
-                w.init(mapModel);
-                this.world = w;
-                // TODO: remainder of world init
+                if (receiver.isConnected()) {
+                    this.world.tick();
+                    sync.sync();
+
+                    continue;
+                }
             }
+
+            System.out.println("Disconnected");
+            this.world = null;
+
+            while (!receiver.isConnected()) {
+                receiver.attemptReconnect();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Connected");
+
+            receiver.sendPacket(new Packet(PacketType.PLAYER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
+
+            ArrayList<Packet> packets;
+            do {
+                packets = receiver.checkForPackets();
+            } while (packets.size() == 0);
+
+            Packet joinresponse = packets.get(0); // First packet is guaranteed to be a join response
+            PacketBodyText text = (PacketBodyText) joinresponse.body;
+
+            int localplayerid = Integer.parseInt(text.text);
+
+            World w = new World(this);
+            w.setLocalPlayer(new Player(this));
+            w.getPlayers().put(localplayerid, w.getLocalPlayer());
+            w.init(mapModel);
+            this.world = w;
         }
     }
 
