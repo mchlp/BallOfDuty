@@ -2,10 +2,7 @@ package game.server;
 
 import game.data_structures.Pair;
 import game.network.ServerReceiver;
-import game.network.packets.Packet;
-import game.network.packets.PacketBody;
-import game.network.packets.PacketBodyText;
-import game.network.packets.PacketType;
+import game.network.packets.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,6 +28,11 @@ public class ServerProcessor {
             // Process packets
             switch (incoming.second.type) {
                 case PLAYER_MOVE:
+                    PacketBodyCoordinate packetBodyCoordinate = (PacketBodyCoordinate) incoming.second.body;
+                    serverReceiver.getClientList().get(incoming.first).position.x = packetBodyCoordinate.x;
+                    serverReceiver.getClientList().get(incoming.first).position.y = packetBodyCoordinate.y;
+                    serverReceiver.getClientList().get(incoming.first).position.z = packetBodyCoordinate.z;
+
                     for (String player : serverReceiver.getClientList().keySet()) {
                         if (!player.equals(incoming.first)) {
                             serverReceiver.enqueueOutgoingPacket(player, incoming.second);
@@ -38,9 +40,13 @@ public class ServerProcessor {
                     }
                     break;
                 case PLAYER_REQUEST_JOIN:
-                    System.out.println(incoming.first);
                     serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.PLAYER_RESPOND_JOIN,
                             new PacketBodyText(incoming.first)));
+                    for (ClientProfile player : serverReceiver.getClientList().values()) {
+                        serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.PLAYER_MOVE,
+                                new PacketBodyCoordinate(player.id, player.position.x, player.position.y,
+                                        player.position.z)));
+                    }
             }
 
             Packet receivedPacket = new Packet(PacketType.TEXT, new PacketBodyText("Received Message"));

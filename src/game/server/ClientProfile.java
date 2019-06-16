@@ -3,12 +3,14 @@ package game.server;
 import game.data_structures.FixedSizeList;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
+import game.vec.Vec3;
 
 public class ClientProfile {
 
     private static final int PACKET_HISTORY_LENGTH = 1000;
 
     public final String id;
+    public final Vec3 position;
     public final long joined;
     public final String ip;
     public final Queue<Packet> outgoingQueue;
@@ -18,6 +20,7 @@ public class ClientProfile {
 
     public ClientProfile(String id, String ip) {
         this.id = id;
+        this.position = new Vec3(0, 100, 0);
         this.joined = System.currentTimeMillis();
         this.ip = ip;
         outgoingQueue = new Queue<>();
