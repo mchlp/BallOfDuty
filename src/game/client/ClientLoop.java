@@ -36,6 +36,7 @@ public class ClientLoop implements IInputHandler {
         renderer.init();
 
         this.mapModel = Model.loadOBJ(new File("obj/map.obj"), new File("obj/terrain.png"));
+        Player.init();
     }
 
     public boolean shouldRun() {
@@ -64,9 +65,46 @@ public class ClientLoop implements IInputHandler {
 
     private void tick() {
         TimeSync sync = new TimeSync(10000000); // 100 r/s
+        ArrayList<Packet> packets = null;
         while (shouldRun()) {
+            if (!receiver.isConnected()) {
+                System.out.println("Disconnected");
+                this.world = null;
+
+                while (!receiver.isConnected()) {
+                    receiver.attemptReconnect();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("Connected");
+
+                receiver.sendPacket(new Packet(PacketType.PLAYER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
+
+                do {
+                    packets = receiver.checkForPackets();
+                } while (packets.size() == 0);
+
+                Packet joinresponse = packets.get(0); // First packet is guaranteed to be a join response
+                PacketBodyText text = (PacketBodyText) joinresponse.body;
+
+                System.out.println(packets.size());
+
+                int localplayerid = Integer.parseInt(text.text);
+
+                World w = new World(this);
+                w.setLocalPlayer(new Player(this));
+                w.getPlayers().put(localplayerid, w.getLocalPlayer());
+                w.init(mapModel);
+                this.world = w;
+            }
+
             if (receiver.isConnected()) {
-                ArrayList<Packet> packets = receiver.checkForPackets();
+                if (packets == null) {
+                    packets = receiver.checkForPackets();
+                }
 
                 for (Packet p : packets) {
                     if (p.type == PacketType.PLAYER_MOVE) {
@@ -78,48 +116,13 @@ public class ClientLoop implements IInputHandler {
                         player.setY(coords.y);
                         player.setZ(coords.z);
 
-                        System.out.println("Received move for player id: " + playerid);
+                        System.out.println("Received move player");
                     }
                 }
 
-                if (receiver.isConnected()) {
-                    this.world.tick();
-                    sync.sync();
-
-                    continue;
-                }
+                this.world.tick();
+                sync.sync();
             }
-
-            System.out.println("Disconnected");
-            this.world = null;
-
-            while (!receiver.isConnected()) {
-                receiver.attemptReconnect();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("Connected");
-
-            receiver.sendPacket(new Packet(PacketType.PLAYER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
-
-            ArrayList<Packet> packets;
-            do {
-                packets = receiver.checkForPackets();
-            } while (packets.size() == 0);
-
-            Packet joinresponse = packets.get(0); // First packet is guaranteed to be a join response
-            PacketBodyText text = (PacketBodyText) joinresponse.body;
-
-            int localplayerid = Integer.parseInt(text.text);
-
-            World w = new World(this);
-            w.setLocalPlayer(new Player(this));
-            w.getPlayers().put(localplayerid, w.getLocalPlayer());
-            w.init(mapModel);
-            this.world = w;
         }
     }
 

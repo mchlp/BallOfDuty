@@ -148,7 +148,7 @@ public class Player implements ITickable {
         }
 
         onGround = false;
-        for(int i = 0; i < 8; ++i) {
+        for (int i = 0; i < 8; ++i) {
             collide();
         }
     }
@@ -215,17 +215,17 @@ public class Player implements ITickable {
         Collections.sort(planes); // Sort these planes from closest to farthest, to prevent colliding with invisible edges
 
         // Collide with the nearest plane first
-        for(CollisionPlane plane : planes) {
+        for (CollisionPlane plane : planes) {
             Vec3 closest = plane.closestPoint;
             //System.out.println(pos.sub(closest).magnitude());
             if (plane.distance < radius) {
                 Vec3 toPlayer = pos.sub(closest).normalize();
 //                System.out.println(closest);
                 pos = toPlayer.mul(radius - 1e-6).add(closest);
-                if(vel.dot(toPlayer) < 0) {
+                if (vel.dot(toPlayer) < 0) {
                     vel = vel.sub(vel.project(pos.sub(closest)));
                 }
-                if(toPlayer.y > 0.7) {
+                if (toPlayer.y > 0.7) {
                     onGround = true;
                 }
                 break;
@@ -276,26 +276,28 @@ public class Player implements ITickable {
         glNewList(displayList, GL_COMPILE);
         glBegin(GL_TRIANGLES);
 
-        final int sectorCount = 20;
-        final int stackCount = 20;
+        int i, j;
+        for(i = 0; i <= 20; i++) {
+            double lat0 = Math.PI * (-0.5 + (double) (i - 1) / 20);
+            double z0  = Math.sin(lat0);
+            double zr0 =  Math.cos(lat0);
 
-        double sectorStep = 2 * Math.PI / sectorCount;
-        double stackStep = Math.PI / stackCount;
-        double sectorAngle, stackAngle;
+            double lat1 = Math.PI * (-0.5 + (double) i / 20);
+            double z1 = Math.sin(lat1);
+            double zr1 = Math.cos(lat1);
 
-        for (int i = 0; i <= stackCount; i++) {
-            stackAngle = Math.PI / 2 - i * stackStep;
-            double xy = Math.cos(stackAngle);
-            double z = Math.sin(stackAngle);
+            glBegin(GL_QUAD_STRIP);
+            for(j = 0; j <= 20; j++) {
+                double lng = 2 * Math.PI * (double) (j - 1) / 20;
+                double x = Math.cos(lng);
+                double y = Math.sin(lng);
 
-            for (int j = 0; j <= sectorCount; ++j) {
-                sectorAngle = j * sectorStep;
-
-                double x = xy * Math.cos(sectorAngle);
-                double y = xy * Math.sin(sectorAngle);
-
-                glVertex3d(x, y, z);
+                glNormal3d(x * zr0, y * zr0, z0);
+                glVertex3d(x * zr0, y * zr0, z0);
+                glNormal3d(x * zr1, y * zr1, z1);
+                glVertex3d(x * zr1, y * zr1, z1);
             }
+            glEnd();
         }
 
         glEnd();
@@ -309,9 +311,13 @@ public class Player implements ITickable {
     }
 
     public void render() {
+        System.out.println("Rendered player");
+
         glPushMatrix();
 
-        glTranslated(x, y, z);
+        glColor3d(1, 1, 1);
+
+        //glTranslated(x, y, z);
         glScaled(radius, radius, radius);
         glRotated(yaw, 0, 1, 0);
         glRotated(pitch, 1, 0, 0);

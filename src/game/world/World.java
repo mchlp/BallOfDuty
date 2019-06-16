@@ -26,7 +26,7 @@ public class World {
 
     public void render() {
         model.render();
-        renderAllPlayers();
+//        renderAllPlayers();
     }
 
     public Model getModel() {
@@ -64,7 +64,7 @@ public class World {
     }
 
     public Player obtainPlayer(int playerid) {
-        if (players.contains(playerid)) {
+        if (players.containsKey(playerid)) {
             return players.get(playerid);
         }
 
