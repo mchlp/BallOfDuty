@@ -20,7 +20,7 @@ public class ClientReceiver extends Receiver {
 
     public static final int TIME_PER_HEARTBEAT = 2 * 1000;
 
-    private static final String ADDRESS = "10.8.9.4";
+    private static final String ADDRESS = "localhost";
     private static final int PORT = 8861;
 
     private SocketChannel socketChannel;
@@ -121,6 +121,7 @@ public class ClientReceiver extends Receiver {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ClientReceiver clientReceiver = new ClientReceiver(ADDRESS, PORT);
+        clientReceiver.openChannel();
 
         while (true) {
             Thread.sleep(500);
