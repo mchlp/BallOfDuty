@@ -43,6 +43,8 @@ public class ServerProcessor {
                     for (ClientProfile player : serverReceiver.getClientList().values()) {
                         serverReceiver.enqueueOutgoingPacket(incoming.first, new Packet(PacketType.PLAYER_MOVE,
                                 player.getPacketBodyCoordinate()));
+                        serverReceiver.enqueueOutgoingPacket(player.id, new Packet(PacketType.PLAYER_MOVE,
+                                serverReceiver.getClientList().get(incoming.first).getPacketBodyCoordinate()));
                     }
             }
 
