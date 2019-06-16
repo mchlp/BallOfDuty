@@ -1,8 +1,14 @@
 package game.client;
 
+import game.client.model.Model;
+import game.network.ClientReceiver;
 import game.util.TimeSync;
 import game.world.Player;
 import game.world.World;
+
+import java.io.File;
+
+import static org.lwjgl.opengl.GL11.*;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -11,6 +17,8 @@ public class ClientLoop implements IInputHandler {
     private Renderer renderer;
     private World world;
     private ClientState state;
+    private ClientReceiver receiver;
+    private Model mapModel;
 
     private Window window;
 
@@ -21,9 +29,11 @@ public class ClientLoop implements IInputHandler {
         window = new Window("Ball of Duty");
         window.setInputCallback(this);
         renderer = new Renderer(this, window);
-        world = new World(this);
+        receiver = new ClientReceiver("localhost", 8861);
 
         renderer.init();
+
+        this.mapModel = Model.loadOBJ(new File("obj/map.obj"), new File("obj/terrain.png"));
     }
 
     public boolean shouldRun() {
@@ -31,13 +41,16 @@ public class ClientLoop implements IInputHandler {
     }
 
     public void run() {
-        world.init();
-
         new Thread(this::tick).start();
         TimeSync sync = new TimeSync(6000000); // 60 fps
 
         while (shouldRun()) {
-            renderer.invoke();
+            if (this.world == null) {
+                glClear(GL_COLOR_BUFFER_BIT);
+                window.swapBuffers();
+            } else {
+                renderer.invoke();
+            }
             Window.pollEvents();
             sync.sync();
         }
@@ -46,8 +59,29 @@ public class ClientLoop implements IInputHandler {
     private void tick() {
         TimeSync sync = new TimeSync(10000000); // 100 r/s
         while (shouldRun()) {
-            this.world.tick();
-            sync.sync();
+            if (receiver.isConnected()) {
+                this.world.tick();
+                sync.sync();
+            } else {
+                System.out.println("Disconnected");
+                this.world = null;
+
+                while (!receiver.isConnected()) {
+                    receiver.attemptReconnect();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("Connected");
+
+                World w = new World(this);
+                w.setLocalPlayer(new Player(this));
+                w.init(mapModel);
+                this.world = w;
+                // TODO: remainder of world init
+            }
         }
     }
 
@@ -55,9 +89,9 @@ public class ClientLoop implements IInputHandler {
     public void onCursorPos(double x, double y) {
         double cdx = x - clx;
         double cdy = y - cly;
-        if (getWindow().getCursorLock()) {
-            if (Math.abs(cdx) > 0) getLocalPlayer().addYaw(-cdx/3);
-            if (Math.abs(cdy) > 0) getLocalPlayer().addPitch(-cdy/3);
+        if (getWindow().getCursorLock() && this.world != null) {
+            if (Math.abs(cdx) > 0) getLocalPlayer().addYaw(-cdx / 3);
+            if (Math.abs(cdy) > 0) getLocalPlayer().addPitch(-cdy / 3);
         }
 
         clx = x;

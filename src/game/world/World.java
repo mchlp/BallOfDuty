@@ -13,8 +13,8 @@ public class World {
         localPlayer = new Player(loop);
     }
 
-    public void init(){
-        model = Model.loadOBJ(new File("obj/map.obj"), new File("obj/terrain.png"));
+    public void init(Model model){
+        this.model = model;
     }
 
     public void render() {
