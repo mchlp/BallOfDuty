@@ -40,7 +40,7 @@ public class Server extends Application {
             selectedClient = NO_CLIENT_SELECTED_STRING;
 
             BorderPane root = new BorderPane();
-            clientListView = new ListView<>();
+            clientListView = newcd ListView<>();
             clientListView.setPrefWidth(320);
             root.setLeft(clientListView);
 
@@ -51,7 +51,7 @@ public class Server extends Application {
 
             primaryStage.setTitle("Server GUI");
             primaryStage.setScene(scene);
-            primaryStage.setResizable(false);
+            primaryStage.setResizable(true);
             primaryStage.show();
 
             prevTime = System.nanoTime();
