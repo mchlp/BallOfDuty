@@ -30,7 +30,7 @@ public class ClientReceiver extends Receiver {
     private boolean isConnected;
     private String clientId;
 
-    public ClientReceiver(String address, int port) throws IOException {
+    public ClientReceiver(String address, int port) {
         super();
         this.address = address;
         this.port = port;
