@@ -47,9 +47,6 @@ public class ServerProcessor {
                                 serverReceiver.getClientList().get(incoming.first).getPacketBodyCoordinate()));
                     }
             }
-
-            Packet receivedPacket = new Packet(PacketType.TEXT, new PacketBodyText("Received Message"));
-            serverReceiver.enqueueOutgoingPacket(incoming.first, receivedPacket);
         }
 
         if (System.currentTimeMillis() - lastHeartbeat > TIME_PER_HEARTBEAT) {
