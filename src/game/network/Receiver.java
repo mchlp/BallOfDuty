@@ -53,8 +53,12 @@ public abstract class Receiver {
                     break;
                 case PLAYER_RESPOND_JOIN:
                     packetBody = PacketBodyText.fromSerialized(body.toString());
+                    break;
                 case TEXT:
                     packetBody = PacketBodyText.fromSerialized(body.toString());
+                    break;
+                case PLAYER_SHOOT:
+                    packetBody = PacketBodyPlayer.fromSerialized(body.toString());
                     break;
                 case PLAYER_HEARTBEAT:
                 case SERVER_HEARTBEAT:

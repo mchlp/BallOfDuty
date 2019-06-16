@@ -18,8 +18,8 @@ public class ServerProcessor {
 
     private long lastHeartbeat;
 
-    public ServerProcessor(int port) throws IOException {
-        serverReceiver = new ServerReceiver(port);
+    public ServerProcessor(String ip, int port) throws IOException {
+        serverReceiver = new ServerReceiver(ip, port);
     }
 
     public void tick() throws IOException {

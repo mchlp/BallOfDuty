@@ -16,7 +16,8 @@ import java.util.Arrays;
 
 public class Server extends Application {
 
-    private static final int PORT = 9100;
+    private static final String ADDRESS = "0.0.0.0";
+    private static final int PORT = 8861;
 
     private static final String NO_CLIENTS_CONNECTED_STRING = "No connected clients.";
     private static final String NO_CLIENT_SELECTED_STRING = "No selected client.";
@@ -35,7 +36,7 @@ public class Server extends Application {
     public void start(Stage primaryStage) {
 
         try {
-            serverProcessor = new ServerProcessor(PORT);
+            serverProcessor = new ServerProcessor(ADDRESS, PORT);
             selectedClient = NO_CLIENT_SELECTED_STRING;
 
             BorderPane root = new BorderPane();

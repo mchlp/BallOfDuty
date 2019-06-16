@@ -9,6 +9,7 @@ package game.network;
 import game.data_structures.Pair;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
+import game.server.ClientIDGenerator;
 import game.server.ClientProfile;
 
 import java.io.IOException;
@@ -21,24 +22,25 @@ import java.util.*;
 
 public class ServerReceiver extends Receiver {
 
-
+    private ClientIDGenerator clientIDGenerator;
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
     private Queue<Pair<String, Packet>> incomingPacketQueue;
     private HashMap<String, ClientProfile> clientList;
     private HashSet<String> kickQueue;
 
-    public ServerReceiver(int port) throws IOException {
+    public ServerReceiver(String ip, int port) throws IOException {
+        clientIDGenerator = new ClientIDGenerator();
         clientList = new HashMap<>();
         selector = Selector.open();
         incomingPacketQueue = new Queue<>();
         kickQueue = new HashSet<>();
         serverSocketChannel = ServerSocketChannel.open();
-        openChannel(port);
+        openChannel(ip, port);
     }
 
-    private void openChannel(int port) throws IOException {
-        serverSocketChannel.bind(new InetSocketAddress("localhost", port));
+    private void openChannel(String ip, int port) throws IOException {
+        serverSocketChannel.bind(new InetSocketAddress(ip, port));
         serverSocketChannel.configureBlocking(false);
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         System.out.format("Opened server socket on port %d...\n", port);
@@ -58,7 +60,7 @@ public class ServerReceiver extends Receiver {
     }
 
     private void register(SelectionKey key, Selector selector, ServerSocketChannel serverSocketChannel) throws IOException {
-        String socketId = UUID.randomUUID().toString();
+        String socketId = Integer.toString(clientIDGenerator.nextID());
         Queue<Packet> outgoingQueue = new Queue<>();
 
         SocketChannel client = serverSocketChannel.accept();

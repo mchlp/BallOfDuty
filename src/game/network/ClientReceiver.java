@@ -20,8 +20,8 @@ public class ClientReceiver extends Receiver {
 
     public static final int TIME_PER_HEARTBEAT = 2 * 1000;
 
-    private static final String ADDRESS = "localhost";
-    private static final int PORT = 9100;
+    private static final String ADDRESS = "10.8.9.4";
+    private static final int PORT = 8861;
 
     private SocketChannel socketChannel;
     private String address;
@@ -36,7 +36,6 @@ public class ClientReceiver extends Receiver {
         this.port = port;
         lastHeartbeatSent = 0;
         isConnected = false;
-        openChannel();
     }
 
     private void openChannel() {
@@ -50,7 +49,7 @@ public class ClientReceiver extends Receiver {
             socketChannel.configureBlocking(false);
 
             isConnected = true;
-            sendPacket(new Packet(PacketType.PLAYER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
+            sendPacket(new Packet(PacketType.PLA'YER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
 
         } catch (IOException e) {
             isConnected = false;
