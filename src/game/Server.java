@@ -40,7 +40,7 @@ public class Server extends Application {
             selectedClient = NO_CLIENT_SELECTED_STRING;
 
             BorderPane root = new BorderPane();
-            clientListView = newcd ListView<>();
+            clientListView = new ListView<>();
             clientListView.setPrefWidth(320);
             root.setLeft(clientListView);
 
