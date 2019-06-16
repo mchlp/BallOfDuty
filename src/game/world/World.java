@@ -1,13 +1,16 @@
 package game.world;
 
+import game.client.ClientLoop;
 import game.client.model.Model;
 
 import java.io.File;
 
 public class World {
     private Model model;
+    private Player localPlayer;
 
-    public World() {
+    public World(ClientLoop loop) {
+        localPlayer = new Player(loop);
     }
 
     public void init(){
@@ -24,5 +27,17 @@ public class World {
 
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    public Player getLocalPlayer() {
+        return localPlayer;
+    }
+
+    public void setLocalPlayer(Player localPlayer) {
+        this.localPlayer = localPlayer;
+    }
+
+    public void tick() {
+        this.localPlayer.tick();
     }
 }

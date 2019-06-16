@@ -10,7 +10,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 public class ClientLoop implements IInputHandler {
     private Renderer renderer;
     private World world;
-    private Player localPlayer;
     private ClientState state;
 
     private Window window;
@@ -22,8 +21,7 @@ public class ClientLoop implements IInputHandler {
         window = new Window("Ball of Duty");
         window.setInputCallback(this);
         renderer = new Renderer(this, window);
-        world = new World();
-        localPlayer = new Player(this);
+        world = new World(this);
 
         renderer.init();
     }
@@ -48,7 +46,7 @@ public class ClientLoop implements IInputHandler {
     private void tick() {
         TimeSync sync = new TimeSync(10000000); // 100 r/s
         while (shouldRun()) {
-            this.localPlayer.tick();
+            this.world.tick();
             sync.sync();
         }
     }
@@ -89,11 +87,11 @@ public class ClientLoop implements IInputHandler {
     }
 
     public Player getLocalPlayer() {
-        return localPlayer;
+        return this.world.getLocalPlayer();
     }
 
     public void setLocalPlayer(Player localPlayer) {
-        this.localPlayer = localPlayer;
+        this.world.setLocalPlayer(localPlayer);
     }
 
     public Window getWindow() {
