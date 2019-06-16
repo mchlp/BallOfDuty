@@ -9,6 +9,7 @@ import game.world.World;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -65,8 +66,8 @@ public class ClientLoop implements IInputHandler {
 
     private void tick() {
         TimeSync sync = new TimeSync(10000000); // 100 r/s
-        ArrayList<Packet> packets = null;
         while (shouldRun()) {
+            List<Packet> packets = null;
             if (!receiver.isConnected()) {
                 System.out.println("Disconnected");
                 this.world = null;
@@ -83,20 +84,35 @@ public class ClientLoop implements IInputHandler {
 
                 receiver.sendPacket(new Packet(PacketType.PLAYER_REQUEST_JOIN, PacketBody.EMPTY_BODY));
 
-                do {
-                    packets = receiver.checkForPackets();
-                } while (packets.size() == 0);
+                int localplayerid;
+                out:
+                while (true) {
+                    do {
+                        packets = receiver.checkForPackets();
+                    } while (packets.size() == 0);
 
-                Packet joinresponse = packets.get(0); // First packet is guaranteed to be a join response
-                PacketBodyText text = (PacketBodyText) joinresponse.body;
+                    System.out.println("Received packets");
 
-                System.out.println(packets.size());
+                    for (int i = 0; i < packets.size(); i++) {
+                        Packet p = packets.get(i);
+                        if (p.type == PacketType.PLAYER_RESPOND_JOIN) {
+                            System.out.println("Packet is response join");
+                            PacketBodyText text = (PacketBodyText) p.body;
+                            localplayerid = Integer.parseInt(text.text);
 
-                int localplayerid = Integer.parseInt(text.text);
+                            packets = packets.subList(i, packets.size());
+                            break out;
+                        } else {
+                            System.out.println("Packet is not response join");
+                        }
+                    }
+                }
 
+                System.out.println("Initializing world");
                 World w = new World(this);
                 w.setLocalPlayer(new Player(this));
                 w.getPlayers().put(localplayerid, w.getLocalPlayer());
+                w.setLocalid(localplayerid);
                 w.init(mapModel);
                 this.world = w;
             }
@@ -115,10 +131,17 @@ public class ClientLoop implements IInputHandler {
                         player.setX(coords.x);
                         player.setY(coords.y);
                         player.setZ(coords.z);
-
-                        System.out.println("Received move player");
                     }
                 }
+
+                receiver.sendPacket(new Packet(PacketType.PLAYER_MOVE, new PacketBodyCoordinate(
+                        world.getLocalid() + "",
+                        getLocalPlayer().getX(),
+                        getLocalPlayer().getY(),
+                        getLocalPlayer().getZ(),
+                        getLocalPlayer().getYaw(),
+                        getLocalPlayer().getPitch()
+                )));
 
                 this.world.tick();
                 sync.sync();

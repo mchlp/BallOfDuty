@@ -13,6 +13,7 @@ public class World {
     private Player localPlayer;
     private ConcurrentHashMap<Integer, Player> players;
     private ClientLoop loop;
+    private int localid;
 
     public World(ClientLoop loop) {
         this.loop = loop;
@@ -26,7 +27,7 @@ public class World {
 
     public void render() {
         model.render();
-//        renderAllPlayers();
+        renderAllPlayers();
     }
 
     public Model getModel() {
@@ -71,5 +72,13 @@ public class World {
         Player player = new Player(loop);
         players.put(playerid, player);
         return player;
+    }
+
+    public int getLocalid() {
+        return localid;
+    }
+
+    public void setLocalid(int localid) {
+        this.localid = localid;
     }
 }

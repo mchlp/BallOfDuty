@@ -311,13 +311,11 @@ public class Player implements ITickable {
     }
 
     public void render() {
-        System.out.println("Rendered player");
-
         glPushMatrix();
 
         glColor3d(1, 1, 1);
 
-        //glTranslated(x, y, z);
+        glTranslated(x, y, z);
         glScaled(radius, radius, radius);
         glRotated(yaw, 0, 1, 0);
         glRotated(pitch, 1, 0, 0);
