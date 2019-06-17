@@ -31,6 +31,7 @@ public class Renderer {
         window.makeGLContextCurrent();
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_2D);
+        glColor3d(1, 1, 1);
 
         Window.Dimension windowsize = window.getWindowSize();
 
@@ -45,7 +46,9 @@ public class Renderer {
         glLoadIdentity();
         loop.getLocalPlayer().applyCamera();
 
+        glEnable(GL_TEXTURE_2D);
         loop.getWorld().render();
+        glDisable(GL_TEXTURE_2D);
         HUD.render(loop.getLocalPlayer(), windowsize);
 
         Window.pollEvents();

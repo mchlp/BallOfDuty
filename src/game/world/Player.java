@@ -20,6 +20,14 @@ public class Player implements ITickable {
     private boolean onGround;
     private ClientLoop loop;
 
+    private double ammunition = 4;
+    private double ammunition_animation = ammunition;
+    public static final double MAX_AMMUNITION = 4;
+
+    private double health = 5;
+    private double health_animation = health;
+    public static final double MAX_HEALTH = 5;
+
     private static int PLAYER_MODEL;
 
     public Player(ClientLoop loop) {
@@ -104,6 +112,30 @@ public class Player implements ITickable {
 
     @Override
     public void tick() {
+        if (this.ammunition < this.ammunition_animation) {
+            this.ammunition_animation -= 0.05;
+        } else {
+            this.ammunition_animation = this.ammunition;
+        }
+        
+        if (this.health < this.health_animation) {
+            this.health_animation -= 0.05;
+        } else {
+            this.health_animation = this.health;
+        }
+
+        if (this.ammunition + 0.001 < MAX_AMMUNITION) {
+            this.addAmmunition(0.001);
+        } else {
+            this.ammunition = MAX_AMMUNITION;
+        }
+        
+        if (this.health + 0.0002 < MAX_HEALTH) {
+            this.addHealth(0.0002);
+        } else {
+            this.health = MAX_HEALTH;
+        }
+
         x += vx;
         y += vy;
         z += vz;
@@ -241,6 +273,38 @@ public class Player implements ITickable {
         vz = vel.z;
     }
 
+    public double getAmmunition() {
+        return ammunition;
+    }
+
+    public double getAmmunitionAnimation() {
+        return ammunition_animation;
+    }
+
+    public void setAmmunition(double ammunition) {
+        this.ammunition = ammunition;
+    }
+
+    public void addAmmunition(double ammunition) {
+        this.ammunition += ammunition;
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public double getHealthAnimation() {
+        return health_animation;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public void addHealth(double health) {
+        this.health += health;
+    }
+
     private class CollisionPlane implements Comparable<CollisionPlane> {
         public Vec3 closestPoint;
         public double distance;
@@ -277,17 +341,17 @@ public class Player implements ITickable {
         glBegin(GL_TRIANGLES);
 
         int i, j;
-        for(i = 0; i <= 20; i++) {
+        for (i = 0; i <= 20; i++) {
             double lat0 = Math.PI * (-0.5 + (double) (i - 1) / 20);
-            double z0  = Math.sin(lat0);
-            double zr0 =  Math.cos(lat0);
+            double z0 = Math.sin(lat0);
+            double zr0 = Math.cos(lat0);
 
             double lat1 = Math.PI * (-0.5 + (double) i / 20);
             double z1 = Math.sin(lat1);
             double zr1 = Math.cos(lat1);
 
             glBegin(GL_QUAD_STRIP);
-            for(j = 0; j <= 20; j++) {
+            for (j = 0; j <= 20; j++) {
                 double lng = 2 * Math.PI * (double) (j - 1) / 20;
                 double x = Math.cos(lng);
                 double y = Math.sin(lng);

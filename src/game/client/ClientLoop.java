@@ -166,6 +166,15 @@ public class ClientLoop implements IInputHandler {
     public void onMouseButton(int button, int action, int mods) {
         if (!renderer.getWindow().getCursorLock()) {
             renderer.getWindow().setCursorLock(true);
+        } else {
+            if (action != GLFW_PRESS) return;
+            if (this.world != null) {
+                if (this.getLocalPlayer().getAmmunition() >= 1) {
+                    this.getLocalPlayer().addAmmunition(-1);
+                } else {
+
+                }
+            }
         }
     }
 
