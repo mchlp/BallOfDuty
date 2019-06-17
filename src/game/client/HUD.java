@@ -30,6 +30,17 @@ public class HUD {
 
         glColor3d(1, 0, 0);
         drawRing(player.getHealthAnimation(), player.getHealth(), Player.MAX_HEALTH, 50, 60, 0.8, 0.2, 0.2, windowsize);
+
+        if (player.getDeath() > 0) {
+            glColor4d(0.5, 0, 0, 0.5);
+
+            glBegin(GL_QUADS);
+            glVertex2d(0, 0);
+            glVertex2d(windowsize.width, 0);
+            glVertex2d(windowsize.width, windowsize.height);
+            glVertex2d(0, windowsize.height);
+            glEnd();
+        }
     }
 
     private static void drawRing(double animValue, double trueValue, double maxValue, double inner, double outer, double r, double g, double b, Window.Dimension windowsize) {

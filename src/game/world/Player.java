@@ -19,6 +19,7 @@ public class Player implements ITickable {
     private double vx, vy, vz;
     private double radius = 1;
     private double speed = 0.05;
+    private int death = 0;
     private int id;
     private boolean onGround;
     private ClientLoop loop;
@@ -142,6 +143,16 @@ public class Player implements ITickable {
             this.health_animation -= 0.05;
         } else {
             this.health_animation = this.health;
+        }
+
+        if (death > 0) {
+            death -= 1;
+
+            if (death <= 0) {
+                reset(0, 10, 0);
+            } else {
+                return;
+            }
         }
 
         if (this.ammunition + 0.001 < MAX_AMMUNITION) {
@@ -377,7 +388,7 @@ public class Player implements ITickable {
     public void setHealth(double health) {
         this.health = health;
         if (this.health <= 0) {
-            reset(0, 10, 0);
+            death = 300;
         }
     }
 
@@ -387,6 +398,14 @@ public class Player implements ITickable {
 
     public int getId() {
         return id;
+    }
+
+    public int getDeath() {
+        return death;
+    }
+
+    public void setDeath(int death) {
+        this.death = death;
     }
 
     public static class CollisionTarget {
