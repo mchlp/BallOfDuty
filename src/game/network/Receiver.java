@@ -58,7 +58,7 @@ public abstract class Receiver {
                     packetBody = PacketBodyText.fromSerialized(body.toString());
                     break;
                 case PLAYER_SHOOT:
-                    packetBody = PacketBodyPlayer.fromSerialized(body.toString());
+                    packetBody = PacketBodyText.fromSerialized(body.toString());
                     break;
                 case PLAYER_HEARTBEAT:
                 case SERVER_HEARTBEAT:

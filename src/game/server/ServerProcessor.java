@@ -27,6 +27,10 @@ public class ServerProcessor {
 
             // Process packets
             switch (incoming.second.type) {
+                case PLAYER_SHOOT:
+                    PacketBodyText packetBodyText = (PacketBodyText) incoming.second.body;
+                    serverReceiver.enqueueOutgoingPacket(packetBodyText.text, incoming.second);
+                    break;
                 case PLAYER_MOVE:
                     PacketBodyCoordinate packetBodyCoordinate = (PacketBodyCoordinate) incoming.second.body;
                     serverReceiver.getClientList().get(incoming.first).setPacketBodyCoordinate(packetBodyCoordinate);
