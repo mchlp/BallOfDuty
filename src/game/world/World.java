@@ -17,7 +17,6 @@ public class World {
 
     public World(ClientLoop loop) {
         this.loop = loop;
-        localPlayer = new Player(loop);
         players = new ConcurrentHashMap<>();
     }
 
@@ -69,7 +68,7 @@ public class World {
             return players.get(playerid);
         }
 
-        Player player = new Player(loop);
+        Player player = new Player(playerid, loop);
         players.put(playerid, player);
         return player;
     }

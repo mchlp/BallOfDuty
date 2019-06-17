@@ -109,7 +109,7 @@ public class ClientLoop implements IInputHandler {
 
                 System.out.println("Initializing world");
                 World w = new World(this);
-                w.setLocalPlayer(new Player(this));
+                w.setLocalPlayer(new Player(localplayerid, this));
                 w.getPlayers().put(localplayerid, w.getLocalPlayer());
                 w.setLocalid(localplayerid);
                 w.init(mapModel);
@@ -130,6 +130,8 @@ public class ClientLoop implements IInputHandler {
                         player.setX(coords.x);
                         player.setY(coords.y);
                         player.setZ(coords.z);
+                    } else if (p.type == PacketType.PLAYER_SHOOT) {
+                        getLocalPlayer().addHealth(-1);
                     }
                 }
 
@@ -177,13 +179,15 @@ public class ClientLoop implements IInputHandler {
                     double yawSin = Math.sin(Math.toRadians(getLocalPlayer().getYaw()));
                     double yawCos = -Math.cos(Math.toRadians(getLocalPlayer().getYaw()));
 
-                    Player.CollisionTarget target = getLocalPlayer().rayTrace(new Vec3(getLocalPlayer().getX(), getLocalPlayer().getY(), getLocalPlayer().getZ()),
-                            new Vec3(pitchCos * yawSin, pitchSin, pitchCos * yawCos), getWorld().getPlayers().values());
+                    Vec3 dir = new Vec3(pitchCos * yawSin, pitchSin, pitchCos * yawCos);
+                    Vec3 pos = new Vec3(getLocalPlayer().getX(), getLocalPlayer().getY(), getLocalPlayer().getZ()).add(dir.normalize().mul(getLocalPlayer().getRadius() + 1e-6));
 
-                    if (target.type== Player.CollisionTarget.TargetType.PLAYER){
+                    Player.CollisionTarget target = getLocalPlayer().rayTrace(pos, dir, getWorld().getPlayers().values());
+
+                    if (target.type == Player.CollisionTarget.TargetType.PLAYER) {
                         Player p = target.hitPlayer;
 
-                        // Notify player they have been shot
+                        receiver.sendPacket(new Packet(PacketType.PLAYER_SHOOT, new PacketBodyText("" + p.getId())));
                     }
                 }
             }

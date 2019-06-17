@@ -19,20 +19,22 @@ public class Player implements ITickable {
     private double vx, vy, vz;
     private double radius = 1;
     private double speed = 0.05;
+    private int id;
     private boolean onGround;
     private ClientLoop loop;
 
-    private double ammunition = 4;
+    private double ammunition = MAX_AMMUNITION;
     private double ammunition_animation = ammunition;
     public static final double MAX_AMMUNITION = 4;
 
-    private double health = 5;
+    private double health = MAX_HEALTH;
     private double health_animation = health;
-    public static final double MAX_HEALTH = 5;
+    public static final double MAX_HEALTH = 3;
 
     private static int PLAYER_MODEL;
 
-    public Player(ClientLoop loop) {
+    public Player(int id, ClientLoop loop) {
+        this.id = id;
         this.loop = loop;
     }
 
@@ -117,6 +119,17 @@ public class Player implements ITickable {
         this.yaw += yaw;
     }
 
+    public void reset(double x, double y, double z) {
+        this.ammunition = MAX_AMMUNITION;
+        this.ammunition_animation = this.ammunition;
+        this.health = MAX_HEALTH;
+        this.health_animation = MAX_HEALTH;
+
+        this.setX(x);
+        this.setY(y);
+        this.setZ(z);
+    }
+
     @Override
     public void tick() {
         if (this.ammunition < this.ammunition_animation) {
@@ -132,13 +145,13 @@ public class Player implements ITickable {
         }
 
         if (this.ammunition + 0.001 < MAX_AMMUNITION) {
-            this.addAmmunition(0.001);
+            this.addAmmunition(0.01);
         } else {
             this.ammunition = MAX_AMMUNITION;
         }
 
         if (this.health + 0.0002 < MAX_HEALTH) {
-            this.addHealth(0.0002);
+            this.addHealth(0.001);
         } else {
             this.health = MAX_HEALTH;
         }
@@ -363,10 +376,17 @@ public class Player implements ITickable {
 
     public void setHealth(double health) {
         this.health = health;
+        if (this.health <= 0) {
+            reset(0, 10, 0);
+        }
     }
 
     public void addHealth(double health) {
-        this.health += health;
+        this.setHealth(this.getHealth() + health);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public static class CollisionTarget {
