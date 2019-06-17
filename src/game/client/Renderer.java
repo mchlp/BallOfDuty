@@ -34,12 +34,14 @@ public class Renderer {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CW);
-        glColor3d(1, 1, 1);
-
         Window.Dimension windowsize = window.getWindowSize();
 
         glViewport(0, 0, windowsize.width, windowsize.height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        glClearColor(0.458823529f, 0.854901961f, 1,1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3d(1, 1, 1);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
