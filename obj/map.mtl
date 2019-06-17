@@ -1,5 +1,5 @@
 # Blender MTL File: 'map.blend'
-# Material Count: 32
+# Material Count: 23
 
 newmtl 11813_Box_car_Boards
 Ns 10.000002
@@ -33,105 +33,6 @@ Ni 1.500000
 d 1.000000
 illum 1
 map_Kd textures/11813_Box_car_Borders.jpg
-
-newmtl 11813_Box_car_Roof
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_Roof.jpg
-
-newmtl 11813_Box_car_Roof.001
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_Roof.jpg
-
-newmtl 11813_Box_car_Roof.002
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_Roof.jpg
-
-newmtl 11813_Box_car_platform
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 0.588200 0.588200 0.588200
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_Platform_diff.jpg
-
-newmtl 11813_Box_car_platform.001
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 0.588200 0.588200 0.588200
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_Platform_diff.jpg
-
-newmtl 11813_Box_car_platform.002
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 0.588200 0.588200 0.588200
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_Platform_diff.jpg
-
-newmtl 11813_Box_car_wheels
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_wheels_diff.jpg
-
-newmtl 11813_Box_car_wheels.001
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_wheels_diff.jpg
-
-newmtl 11813_Box_car_wheels.002
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_wheels_diff.jpg
 
 newmtl 12281_container
 Ns 274.612242

@@ -54,6 +54,9 @@ public abstract class Receiver {
                 case PLAYER_RESPOND_JOIN:
                     packetBody = PacketBodyText.fromSerialized(body.toString());
                     break;
+                case PLAYER_LEAVE:
+                    packetBody = PacketBodyText.fromSerialized(body.toString());
+                    break;
                 case TEXT:
                     packetBody = PacketBodyText.fromSerialized(body.toString());
                     break;
