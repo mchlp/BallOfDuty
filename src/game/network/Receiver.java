@@ -1,3 +1,10 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.network;
 
 import game.network.packets.*;
@@ -7,6 +14,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 
+/**
+ * Abstract receiver class to be implemented by server or client receivers. Contains basic sending and receiving
+ * packet functionality.
+ */
 public abstract class Receiver {
 
     private static final int BODY_BUFFER_LENGTH = 2048;

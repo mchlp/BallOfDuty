@@ -8,6 +8,9 @@ package game.network.packets;
 
 import java.nio.ByteBuffer;
 
+/**
+ * Represents a packet with a type and body. Can be serialized into a ByteBuffer to be sent over a socket.
+ */
 public class Packet {
 
     public static final int HEADER_LENGTH_BYTES = Integer.BYTES;

@@ -1,5 +1,15 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.data_structures;
 
+/**
+ * Queue ADT.
+ */
 public class Queue<T> {
 
     Element<T> frontElement;

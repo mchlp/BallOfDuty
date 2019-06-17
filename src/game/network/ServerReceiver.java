@@ -1,6 +1,7 @@
 /*
  *  Author: Michael Pu
- *  Teacher: Mr. Radulovic
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
  *  Course: ICS4U
  */
 
@@ -25,6 +26,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+/**
+ * Handles the receiving and sending packets from and to clients.
+ */
 public class ServerReceiver extends Receiver {
 
     private ClientIDGenerator clientIDGenerator;

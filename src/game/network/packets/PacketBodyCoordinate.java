@@ -1,5 +1,15 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.network.packets;
 
+/**
+ * A packet body which is able to store a set of x, y, z coordinates, yaw, pitch, and id of a player.
+ */
 public class PacketBodyCoordinate extends PacketBody {
 
     public final double x;

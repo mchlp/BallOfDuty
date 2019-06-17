@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * Processes the packets sent and received from the clients.
+ * Processes the packets sent and received from the clients. It handles responding to all packets.
  */
 public class ServerProcessor {
 

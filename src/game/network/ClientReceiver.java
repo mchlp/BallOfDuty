@@ -1,6 +1,7 @@
 /*
  *  Author: Michael Pu
- *  Teacher: Mr. Radulovic
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
  *  Course: ICS4U
  */
 
@@ -8,7 +9,6 @@ package game.network;
 
 import game.network.packets.Packet;
 import game.network.packets.PacketBody;
-import game.network.packets.PacketBodyCoordinate;
 import game.network.packets.PacketType;
 
 import java.io.IOException;
@@ -16,6 +16,9 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 
+/**
+ * Receiver on the client side which handles receiving packets from the server and sending packets to the server.
+ */
 public class ClientReceiver extends Receiver {
 
     public static final int TIME_PER_HEARTBEAT = 2 * 1000;

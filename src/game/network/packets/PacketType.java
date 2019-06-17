@@ -1,5 +1,15 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.network.packets;
 
+/**
+ * Possible PacketTypes that can be used to create a Packet
+ */
 public enum PacketType {
     PLAYER_MOVE(1),
     PLAYER_SHOOT(2),

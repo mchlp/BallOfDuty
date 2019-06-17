@@ -1,7 +1,17 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.data_structures;
 
 import java.util.ArrayList;
 
+/**
+ * A list of a fixed size which will delete the earliest inserted element when the list is full.
+ */
 public class FixedSizeList<T> {
     private int size;
     private int limit;

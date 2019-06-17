@@ -18,7 +18,7 @@ public class Player implements ITickable {
     private double pitch, yaw;
     private double vx, vy, vz;
     private double radius = 1;
-    private double speed = 0.05;
+    private double speed = 0.005;
     private int death = 0;
     private int id;
     private boolean onGround;
@@ -496,7 +496,7 @@ public class Player implements ITickable {
     public void render() {
         glPushMatrix();
 
-        glColor3d(1, 1, 1);
+        glColor3d(0.847058824, 0.678431373, 0.28627451);
 
         glTranslated(x, y, z);
         glScaled(radius, radius, radius);
