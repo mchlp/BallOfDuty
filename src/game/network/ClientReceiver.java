@@ -130,10 +130,6 @@ public class ClientReceiver extends Receiver {
 
             ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
 
-            for (Packet packet : receivedPackets) {
-                System.out.println("Packet received: " + packet);
-            }
-
             if (!clientReceiver.isConnected()) {
                 clientReceiver.attemptReconnect();
             }

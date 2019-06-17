@@ -208,7 +208,6 @@ public class Player implements ITickable {
 
         onGround = false;
         ArrayList<CollisionPlane> planes = generateCollisionCandidates();
-        System.out.println(planes.size());
         for (int i = 0; i < 2; ++i) {
             collide(planes);
         }
@@ -309,7 +308,6 @@ public class Player implements ITickable {
     }
 
     private ArrayList<CollisionPlane> generateCollisionCandidates() {
-        System.out.println("Total vertices: " + loop.getWorld().getModel().getFaces().size());
         ArrayList<CollisionPlane> planes = new ArrayList<>();
 
         Vec3 pos = new Vec3(tx, ty, tz);

@@ -39,7 +39,7 @@ public class Renderer {
         glViewport(0, 0, windowsize.width, windowsize.height);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        glClearColor(0.458823529f, 0.854901961f, 1,1);
+        glClearColor(0.690196078f, 0.878431373f, 0.901960784f,1);
         glClear(GL_COLOR_BUFFER_BIT);
         glColor3d(1, 1, 1);
 

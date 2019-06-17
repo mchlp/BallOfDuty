@@ -95,14 +95,11 @@ public class ClientLoop implements IInputHandler {
                     for (int i = 0; i < packets.size(); i++) {
                         Packet p = packets.get(i);
                         if (p.type == PacketType.PLAYER_RESPOND_JOIN) {
-                            System.out.println("Packet is response join");
                             PacketBodyText text = (PacketBodyText) p.body;
                             localplayerid = Integer.parseInt(text.text);
 
                             packets = packets.subList(i, packets.size());
                             break out;
-                        } else {
-                            System.out.println("Packet is not response join");
                         }
                     }
                 }
@@ -132,11 +129,6 @@ public class ClientLoop implements IInputHandler {
                         player.setZ(coords.z);
                     } else if (p.type == PacketType.PLAYER_SHOOT) {
                         getLocalPlayer().addHealth(-1);
-                    } else if (p.type == PacketType.PLAYER_LEAVE) {
-                        PacketBodyText text = (PacketBodyText) p.body;
-                        int id = Integer.parseInt(text.text);
-
-                        getWorld().getPlayers().remove(id);
                     }
                 }
 
@@ -174,10 +166,11 @@ public class ClientLoop implements IInputHandler {
             renderer.getWindow().setCursorLock(true);
         } else {
             if (action != GLFW_PRESS) return;
-            if (this.world != null || getLocalPlayer().getDeath() > 0) {
+            if (this.world != null) {
                 if (this.getLocalPlayer().getAmmunition() >= 1) {
                     this.getLocalPlayer().addAmmunition(-1);
-                    
+
+
                     double pitchSin = Math.sin(Math.toRadians(getLocalPlayer().getPitch()));
                     double pitchCos = Math.cos(Math.toRadians(getLocalPlayer().getPitch()));
                     double yawSin = Math.sin(Math.toRadians(getLocalPlayer().getYaw()));
