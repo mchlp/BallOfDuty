@@ -23,7 +23,6 @@ public class ServerProcessor {
         serverReceiver.sendAndRecieve();
         while (serverReceiver.hasNextIncomingPacket()) {
             Pair<String, Packet> incoming = serverReceiver.popNextIncomingPacket();
-            System.out.format("Packet received from %s: %s\n", incoming.first, incoming.second);
 
             // Process packets
             switch (incoming.second.type) {
