@@ -1,8 +1,18 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.server.gui;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+/**
+ * A GUI element that represents a field. Contains the field type and the field value.
+ */
 public class Field extends HBox {
 
     private Text titleText;

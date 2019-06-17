@@ -1,3 +1,10 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.server.gui;
 
 import game.data_structures.FixedSizeList;
@@ -6,15 +13,16 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * Stores the history of either packets that were received or sent in the GUI. Extends VBox element of JavaFX.
+ */
 public class ClientHistoryContainer extends VBox {
 
-    private String name;
     private FixedSizeList<PacketHistoryElement> history;
     private TextArea historyDisplay;
 
     public ClientHistoryContainer(String name, FixedSizeList<PacketHistoryElement> history) {
         super();
-        this.name = name;
         this.history = history;
 
         Text label = new Text(name);

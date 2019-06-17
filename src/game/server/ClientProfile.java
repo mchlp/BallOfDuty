@@ -1,11 +1,21 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.server;
 
 import game.data_structures.FixedSizeList;
 import game.data_structures.Queue;
 import game.network.packets.Packet;
 import game.network.packets.PacketBodyCoordinate;
-import game.vec.Vec3;
 
+/**
+ * Stores data relating to a client on the server side. Includes the client position, recent packets sent and
+ * received, the IP, as well a queue of packets that need to be sent to the client.
+ */
 public class ClientProfile {
 
     private static final int PACKET_HISTORY_LENGTH = 1000;

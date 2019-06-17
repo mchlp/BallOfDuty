@@ -1,3 +1,10 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.server;
 
 import game.data_structures.Pair;
@@ -7,6 +14,9 @@ import game.network.packets.*;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Processes the packets sent and received from the clients.
+ */
 public class ServerProcessor {
 
     public static final int TIME_PER_HEARTBEAT = 2 * 1000;

@@ -1,3 +1,10 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game;
 
 import game.server.ServerProcessor;
@@ -14,6 +21,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * This is the main class of the Server. It handles the GUI of the server and encompasses all the classes that
+ * handles the networking on the server side.
+ */
 public class Server extends Application {
 
     private static final String ADDRESS = "0.0.0.0";

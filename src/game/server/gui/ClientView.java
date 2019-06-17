@@ -1,3 +1,10 @@
+/*
+ *  Author: Michael Pu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/17
+ *  Course: ICS4U
+ */
+
 package game.server.gui;
 
 import game.server.ClientProfile;
@@ -12,6 +19,10 @@ import javafx.scene.text.Text;
 
 import java.util.Date;
 
+/**
+ * The GUI component which displays the details of the client with a list of packets sent and received, the client
+ * ID, IP, and joined time.
+ */
 public class ClientView extends VBox {
 
     private static final int PADDING = 10;
