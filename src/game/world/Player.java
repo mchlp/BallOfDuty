@@ -281,7 +281,7 @@ public class Player implements ITickable {
 
         dir = dir.normalize();
 
-        Model model = loop.getWorld().getModel();
+        Model model = loop.getWorld().getCollisionModel();
         for (ModelFace face : model.getFaces()) {
             Vec3 a = face.a.toVec3();
             Vec3 b = face.b.toVec3();
@@ -311,7 +311,7 @@ public class Player implements ITickable {
         ArrayList<CollisionPlane> planes = new ArrayList<>();
 
         Vec3 pos = new Vec3(tx, ty, tz);
-        Model model = loop.getWorld().getModel();
+        Model model = loop.getWorld().getCollisionModel();
 
         for (ModelFace face : model.getFaces()) {
 //            if(face.a.toVec3().sub(pos).magnitude() < 3) {

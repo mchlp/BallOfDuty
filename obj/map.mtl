@@ -1,18 +1,7 @@
-# Blender MTL File: 'map.blend'
-# Material Count: 23
+# Blender MTL File: 'test3.blend'
+# Material Count: 43
 
 newmtl 11813_Box_car_Boards
-Ns 10.000002
-Ka 1.000000 1.000000 1.000000
-Kd 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.500000
-d 1.000000
-illum 1
-map_Kd textures/11813_Box_car_Borders.jpg
-
-newmtl 11813_Box_car_Boards.001
 Ns 10.000002
 Ka 1.000000 1.000000 1.000000
 Kd 1.000000 1.000000 1.000000
@@ -34,6 +23,72 @@ d 1.000000
 illum 1
 map_Kd textures/11813_Box_car_Borders.jpg
 
+newmtl 11813_Box_car_Roof
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/11813_Box_car_Roof.jpg
+
+newmtl 11813_Box_car_Roof.002
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/11813_Box_car_Roof.jpg
+
+newmtl 11813_Box_car_platform
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/11813_Box_car_Platform_diff.jpg
+
+newmtl 11813_Box_car_platform.002
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.588200 0.588200 0.588200
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/11813_Box_car_Platform_diff.jpg
+
+newmtl 11813_Box_car_wheels
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/11813_Box_car_wheels_diff.jpg
+
+newmtl 11813_Box_car_wheels.002
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/11813_Box_car_wheels_diff.jpg
+
 newmtl 12281_container
 Ns 274.612242
 Ka 0.295238 0.295238 0.295238
@@ -43,7 +98,7 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd textures/container.jpg
+map_Kd textures/container1.jpg
 
 newmtl 12281_container.001
 Ns 274.612242
@@ -54,7 +109,7 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd textures/container.jpg
+map_Kd textures/container2.jpg
 
 newmtl 12281_container.002
 Ns 274.612242
@@ -65,7 +120,7 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd textures/container.jpg
+map_Kd textures/container3.jpg
 
 newmtl 12281_container.003
 Ns 274.612242
@@ -76,7 +131,7 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd textures/container.jpg
+map_Kd textures/container4.jpg
 
 newmtl 12281_container.004
 Ns 274.612242
@@ -87,7 +142,7 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd textures/container.jpg
+map_Kd textures/container5.jpg
 
 newmtl 12281_container.006
 Ns 274.612242
@@ -98,7 +153,7 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd textures/container.jpg
+map_Kd textures/container6.jpg
 
 newmtl 12281_container.007
 Ns 274.612242
@@ -109,7 +164,77 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd textures/container.jpg
+map_Kd textures/container7.jpg
+
+newmtl 12281_container_alum
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl 12281_container_alum.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl 12281_container_alum.002
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl 12281_container_alum.003
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl 12281_container_alum.004
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl 12281_container_alum.006
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl 12281_container_alum.007
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
 
 newmtl Grass.001
 Ns 225.000000
@@ -120,7 +245,18 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd -s 5.000000 5.000000 5.000000 textures/ground.jpg
+map_Kd textures/ground.jpg
+
+newmtl Material.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.122081 0.122081 0.122081
+Ke 0.0 0.0 0.0
+Ni 1.330000
+d 1.000000
+illum 2
+map_Kd textures/crate2.png
 
 newmtl Material.040
 Ns 225.000000
@@ -131,7 +267,7 @@ Ke 0.0 0.0 0.0
 Ni 1.330000
 d 1.000000
 illum 2
-map_Kd textures/Wooden_Crate_Crate_BaseColor.png
+map_Kd textures/crate1.png
 
 newmtl Rock
 Ns 225.000000
@@ -142,7 +278,128 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd textures/rock.jpg
+map_Kd textures/rock1.jpg
+
+newmtl Rock.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock2.jpg
+
+newmtl Rock.002
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock3.jpg
+
+newmtl Rock.003
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock4.jpg
+
+newmtl Rock.004
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock5.jpg
+
+newmtl Rock.005
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock6.jpg
+
+newmtl Rock.006
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock7.jpg
+
+newmtl Rock.007
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock8.jpg
+
+newmtl Rock.008
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock9.jpg
+
+newmtl Rock.009
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock10.jpg
+
+newmtl Rock.011
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock11.jpg
+
+newmtl Rock.012
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/rock12.jpg
 
 newmtl Statue.001
 Ns 225.000000
@@ -153,51 +410,7 @@ Ke 0.0 0.0 0.0
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd -s 5.000000 5.000000 5.000000 textures/statue.jpg
-
-newmtl Tex_0081_1.dds
-Ns 18.000005
-Ka 1.000000 1.000000 1.000000
-Kd 0.588000 0.588000 0.588000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd textures/Tex_0081_1.jpg
-
-newmtl Tex_0081_1.dds.001
-Ns 18.000005
-Ka 1.000000 1.000000 1.000000
-Kd 0.588000 0.588000 0.588000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd textures/Tex_0081_1.jpg
-
-newmtl Tex_0081_1.dds.002
-Ns 18.000005
-Ka 1.000000 1.000000 1.000000
-Kd 0.588000 0.588000 0.588000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd textures/Tex_0081_1.jpg
-
-newmtl Tex_0081_1.dds.003
-Ns 18.000005
-Ka 1.000000 1.000000 1.000000
-Kd 0.588000 0.588000 0.588000
-Ks 0.000000 0.000000 0.000000
-Ke 0.0 0.0 0.0
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd textures/Tex_0081_1.jpg
+map_Kd textures/statue.jpg
 
 newmtl Tex_0081_1.dds.005
 Ns 18.000005
@@ -221,28 +434,6 @@ d 1.000000
 illum 1
 map_Kd textures/Tex_0081_1.jpg
 
-newmtl cottage_texture
-Ns 96.078443
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd textures/cottage_diffuse.png
-
-newmtl cottage_texture.001
-Ns 96.078443
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd textures/cottage_diffuse.png
-
 newmtl cottage_texture.002
 Ns 96.078443
 Ka 1.000000 1.000000 1.000000
@@ -252,4 +443,26 @@ Ke 0.0 0.0 0.0
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/cottage_diffuse.png
+map_Kd textures/cottage_diffuse.png.002.png
+
+newmtl cottage_texture.003
+Ns 96.078443
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/cottage_diffuse2.png
+
+newmtl cottage_texture.004
+Ns 96.078443
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/cottage_diffuse3.png

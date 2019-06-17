@@ -21,6 +21,7 @@ public class ClientLoop implements IInputHandler {
     private ClientState state;
     private ClientReceiver receiver;
     private Model mapModel;
+    private Model collideModel;
 
     private Window window;
 
@@ -35,7 +36,8 @@ public class ClientLoop implements IInputHandler {
 
         renderer.init();
 
-        this.mapModel = Model.loadOBJ("map.obj");
+        this.mapModel = Model.loadOBJ("map.obj", false);
+        this.collideModel = Model.loadOBJ("collision.obj", true);
         Player.init();
     }
 
@@ -109,7 +111,7 @@ public class ClientLoop implements IInputHandler {
                 w.setLocalPlayer(new Player(localplayerid, this));
                 w.getPlayers().put(localplayerid, w.getLocalPlayer());
                 w.setLocalid(localplayerid);
-                w.init(mapModel);
+                w.init(mapModel, collideModel);
                 this.world = w;
             }
 

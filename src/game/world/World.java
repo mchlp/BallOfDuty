@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class World {
     private Model model;
+    private Model collisionModel;
     private Player localPlayer;
     private ConcurrentHashMap<Integer, Player> players;
     private ClientLoop loop;
@@ -20,8 +21,9 @@ public class World {
         players = new ConcurrentHashMap<>();
     }
 
-    public void init(Model model){
+    public void init(Model model, Model collisionModel){
         this.model = model;
+        this.collisionModel = collisionModel;
     }
 
     public void render() {
@@ -33,8 +35,16 @@ public class World {
         return model;
     }
 
+    public Model getCollisionModel() {
+        return collisionModel;
+    }
+
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    public void setCollisionModel(Model model) {
+        this.collisionModel = model;
     }
 
     public Player getLocalPlayer() {

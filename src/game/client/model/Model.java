@@ -30,7 +30,7 @@ public class Model {
         glCallList(displayList);
     }
 
-    public static Model loadOBJ(String objFile) {
+    public static Model loadOBJ(String objFile, boolean objOnly) {
         String obj;
         try {
             obj = new String(Files.readAllBytes(new File(OBJ_DIR, objFile).toPath()));
@@ -64,18 +64,18 @@ public class Model {
 
                 model.uvs.add(uv);
             } else if (parts[0].equals("f")) {
-                if(!startedDrawing) {
+                if(!startedDrawing && !objOnly) {
                     model.displayList = glGenLists(1);
                     glNewList(model.displayList, GL_COMPILE);
                     startedDrawing = true;
                 }
-                if(!drawing) {
+                if(!drawing && !objOnly) {
                     glBegin(GL_TRIANGLES);
                     drawing = true;
                 }
                 ModelFace f = makeFace(model, parts);
                 f.draw();
-            } else if (parts[0].equals("usemtl")) {
+            } else if (parts[0].equals("usemtl") && !objOnly) {
                 if(!startedDrawing) {
                     model.displayList = glGenLists(1);
                     glNewList(model.displayList, GL_COMPILE);
@@ -90,7 +90,7 @@ public class Model {
                 } catch(NullPointerException e) {
                     System.err.println("Referenced material " + parts[1] + " does not exist");
                 }
-            } else if (parts[0].equals("mtllib")) {
+            } else if (parts[0].equals("mtllib") && !objOnly) {
                 model.materials = loadMTL(parts[1]);
             }
         }
