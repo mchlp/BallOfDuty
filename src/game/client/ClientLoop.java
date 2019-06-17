@@ -4,11 +4,10 @@ import game.client.model.Model;
 import game.network.ClientReceiver;
 import game.network.packets.*;
 import game.util.TimeSync;
+import game.vec.Vec3;
 import game.world.Player;
 import game.world.World;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -36,7 +35,7 @@ public class ClientLoop implements IInputHandler {
 
         renderer.init();
 
-        this.mapModel = Model.loadOBJ(new File("obj/map.obj"), new File("obj/terrain.png"));
+        this.mapModel = Model.loadOBJ("map.obj");
         Player.init();
     }
 
@@ -171,8 +170,21 @@ public class ClientLoop implements IInputHandler {
             if (this.world != null) {
                 if (this.getLocalPlayer().getAmmunition() >= 1) {
                     this.getLocalPlayer().addAmmunition(-1);
-                } else {
 
+
+                    double pitchSin = Math.sin(Math.toRadians(getLocalPlayer().getPitch()));
+                    double pitchCos = Math.cos(Math.toRadians(getLocalPlayer().getPitch()));
+                    double yawSin = Math.sin(Math.toRadians(getLocalPlayer().getYaw()));
+                    double yawCos = -Math.cos(Math.toRadians(getLocalPlayer().getYaw()));
+
+                    Player.CollisionTarget target = getLocalPlayer().rayTrace(new Vec3(getLocalPlayer().getX(), getLocalPlayer().getY(), getLocalPlayer().getZ()),
+                            new Vec3(pitchCos * yawSin, pitchSin, pitchCos * yawCos), getWorld().getPlayers().values());
+
+                    if (target.type== Player.CollisionTarget.TargetType.PLAYER){
+                        Player p = target.hitPlayer;
+
+                        // Notify player they have been shot
+                    }
                 }
             }
         }

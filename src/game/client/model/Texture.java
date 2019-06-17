@@ -5,17 +5,26 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
     private int texture;
 
+    private static HashMap<File, Texture> textureCache = new HashMap<>();
+
     private Texture(int texture) {
         this.texture = texture;
     }
 
     public static Texture loadTexture(File file) throws IOException {
+        Texture cached = textureCache.get(file);
+        if (cached != null) {
+            return cached;
+        }
+
+        System.out.println("Loading texture: " + file);
         BufferedImage bufimg = ImageIO.read(file);
 
         ByteBuffer buf = ByteBuffer.allocateDirect(bufimg.getWidth() * bufimg.getHeight() * 4);
@@ -36,12 +45,16 @@ public class Texture {
         glBindTexture(GL_TEXTURE_2D, textures[0]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufimg.getWidth(), bufimg.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 
-        return new Texture(textures[0]);
+        Texture texture = new Texture(textures[0]);
+
+        textureCache.put(file, texture);
+
+        return texture;
     }
 
     public void bind() {

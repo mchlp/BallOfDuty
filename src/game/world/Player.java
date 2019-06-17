@@ -6,6 +6,7 @@ import game.client.model.ModelFace;
 import game.vec.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -13,6 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Player implements ITickable {
     private double x, y, z;
+    private double tx, ty, tz; // Buffering position to prevent jittering
     private double pitch, yaw;
     private double vx, vy, vz;
     private double radius = 1;
@@ -32,7 +34,6 @@ public class Player implements ITickable {
 
     public Player(ClientLoop loop) {
         this.loop = loop;
-        y = 5;
     }
 
     public void applyCamera() {
@@ -56,10 +57,12 @@ public class Player implements ITickable {
 
     public void setX(double x) {
         this.x = x;
+        tx = x;
     }
 
     public void addX(double x) {
         this.x += x;
+        tx = x;
     }
 
     public double getY() {
@@ -68,10 +71,12 @@ public class Player implements ITickable {
 
     public void setY(double y) {
         this.y = y;
+        ty = y;
     }
 
     public void addY(double y) {
         this.y += y;
+        ty = y;
     }
 
     public double getZ() {
@@ -80,10 +85,12 @@ public class Player implements ITickable {
 
     public void setZ(double z) {
         this.z = z;
+        tz = z;
     }
 
     public void addZ(double z) {
         this.z += z;
+        tz = z;
     }
 
     public double getPitch() {
@@ -117,7 +124,7 @@ public class Player implements ITickable {
         } else {
             this.ammunition_animation = this.ammunition;
         }
-        
+
         if (this.health < this.health_animation) {
             this.health_animation -= 0.05;
         } else {
@@ -129,16 +136,16 @@ public class Player implements ITickable {
         } else {
             this.ammunition = MAX_AMMUNITION;
         }
-        
+
         if (this.health + 0.0002 < MAX_HEALTH) {
             this.addHealth(0.0002);
         } else {
             this.health = MAX_HEALTH;
         }
 
-        x += vx;
-        y += vy;
-        z += vz;
+        tx = x + vx;
+        ty = y + vy;
+        tz = z + vz;
 
         if (loop.getWindow().getKey(GLFW_KEY_W) == GLFW_PRESS) {
             vx += Math.sin(Math.toRadians(getYaw())) * speed;
@@ -164,109 +171,166 @@ public class Player implements ITickable {
             vy = 1;
         }
 
-//        if (loop.getWindow().getKey(GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-//            vy -= speed;
-//        }
-
         vx *= 0.9;
         vy *= 0.9;
         vz *= 0.9;
 
         vy -= 0.05;
 
-        if (y < 0.6) {
-            y = 0.6;
+        if (ty < 0.6) {
+            ty = 0.6;
             vy = 0;
         }
 
         onGround = false;
-        for (int i = 0; i < 8; ++i) {
-            collide();
+        ArrayList<CollisionPlane> planes = generateCollisionCandidates();
+        System.out.println(planes.size());
+        for (int i = 0; i < 2; ++i) {
+            collide(planes);
         }
+
+        x = tx;
+        y = ty;
+        z = tz;
     }
 
-    private void collide() {
-        ArrayList<CollisionPlane> planes = new ArrayList<>();
+    private Vec3 closestPointInTriangle(Vec3 a, Vec3 b, Vec3 c, Vec3 p) {
+        Vec3 normal = b.sub(a).cross(c.sub(a)).normalize();
+
+        Vec3 nearest = p.sub(p.sub(a).project(normal)); // Nearest point on the plane to player center
+
+        Vec3 ab = closestPointOnLine(p, a, b); // Nearest point on a line segment to player center
+        Vec3 ac = closestPointOnLine(p, a, c);
+        Vec3 bc = closestPointOnLine(p, b, c);
+
+        double abm = p.sub(ab).magnitudeSq(); // Distances to player (ab, ac, bc)
+        double acm = p.sub(ac).magnitudeSq();
+        double bcm = p.sub(bc).magnitudeSq();
+
+        if (!pointInTriangle(p, normal, a, b, c)) {
+            if (abm <= acm && abm <= bcm) { // Check which line has a point closest to player
+                return ab;
+            } else if (acm <= abm && acm <= bcm) {
+                return ac;
+            } else {
+                return bc;
+            }
+        }
+
+        return nearest;
+    }
+
+    private boolean pointInTriangle(Vec3 point, Vec3 normal, Vec3 a, Vec3 b, Vec3 c) {
+        double sa = b.sub(a).cross(point.sub(a)).dot(normal); // Determine cross products
+        double sb = c.sub(b).cross(point.sub(b)).dot(normal);
+        double sc = a.sub(c).cross(point.sub(c)).dot(normal);
+
+        return (sa < 0 && sb < 0 && sc < 0) || (sa > 0 && sb > 0 && sc > 0);// Use cross products to determine whether point is inside triangle
+    }
+
+    public CollisionTarget rayTrace(Vec3 p, Vec3 dir, Collection<Player> players) {
+        CollisionTarget closest = new CollisionTarget();
+        for (Player s : players) {
+            Vec3 v = new Vec3(s.x, s.y, s.z);
+            Vec3 p0 = p.sub(v);
+            double a = dir.magnitudeSq();
+            double b = 2 * p0.dot(dir);
+            double c = p0.magnitudeSq() - s.radius * s.radius;
+            double disc = b * b - 4 * a * c;
+            if (disc > 0) {
+                double root = (-b - Math.sqrt(disc)) / (2 * a);
+                if (root < 0) {
+                    root = (-b + Math.sqrt(disc)) / (2 * a);
+                }
+                if (root > 0) {
+                    Vec3 collisionPoint = p.add(dir.mul(root));
+                    double distance = collisionPoint.sub(p).magnitude();
+                    if (distance < closest.distance) {
+                        closest.type = CollisionTarget.TargetType.PLAYER;
+                        closest.hitFace = null;
+                        closest.hitPlayer = s;
+                        closest.hitPoint = collisionPoint;
+                        closest.distance = distance;
+                    }
+                }
+            }
+        }
+
+        dir = dir.normalize();
 
         Model model = loop.getWorld().getModel();
-        Vec3 pos = new Vec3(x, y, z);
-        Vec3 vel = new Vec3(vx, vy, vz);
-
-//        glPointSize(10);
-//        glBegin(GL_POINTS);
-
-//        glColor3d(1, 0, 1);
-
         for (ModelFace face : model.getFaces()) {
             Vec3 a = face.a.toVec3();
             Vec3 b = face.b.toVec3();
             Vec3 c = face.c.toVec3();
 
-            Vec3 normal = b.sub(a).cross(c.sub(a)).normalize();
+            Vec3 normal = b.sub(a).cross(c.sub(a));
 
-            Vec3 nearest = pos.sub(pos.sub(a).project(normal)); // Nearest point on the plane to player center
-
-            Vec3 ab = closestPointOnLine(pos, a, b); // Nearest point on a line segment to player center
-            Vec3 ac = closestPointOnLine(pos, a, c);
-            Vec3 bc = closestPointOnLine(pos, b, c);
-
-            double abm = pos.sub(ab).magnitudeSq(); // Distances to player (ab, ac, bc)
-            double acm = pos.sub(ac).magnitudeSq();
-            double bcm = pos.sub(bc).magnitudeSq();
-
-            Vec3 closest;
-
-            if (abm <= acm && abm <= bcm) { // Check which line has a point closest to player
-                closest = ab;
-            } else if (acm <= abm && acm <= bcm) {
-                closest = ac;
-            } else {
-                closest = bc;
+            double d = a.sub(p).dot(normal) / dir.dot(normal);
+            if (d > 0) {
+                Vec3 pointOnPlane = p.add(dir.mul(d));
+                if (pointInTriangle(pointOnPlane, normal, a, b, c)) {
+                    double distance = pointOnPlane.sub(p).magnitude();
+                    if (distance < closest.distance) {
+                        closest.type = CollisionTarget.TargetType.FACE;
+                        closest.hitFace = face;
+                        closest.hitPlayer = null;
+                        closest.hitPoint = pointOnPlane;
+                        closest.distance = distance;
+                    }
+                }
             }
+        }
+        return closest;
+    }
 
-            double sa = b.sub(a).cross(pos.sub(a)).dot(normal); // Determine cross products
-            double sb = c.sub(b).cross(pos.sub(b)).dot(normal);
-            double sc = a.sub(c).cross(pos.sub(c)).dot(normal);
+    private ArrayList<CollisionPlane> generateCollisionCandidates() {
+        System.out.println("Total vertices: " + loop.getWorld().getModel().getFaces().size());
+        ArrayList<CollisionPlane> planes = new ArrayList<>();
 
-            if ((sa < 0 && sb < 0 && sc < 0) || (sa > 0 && sb > 0 && sc > 0)) { // Use cross products to determine whether point is inside triangle
-                closest = nearest;
-            }
+        Vec3 pos = new Vec3(tx, ty, tz);
+        Model model = loop.getWorld().getModel();
 
-            planes.add(new CollisionPlane(closest, pos.sub(closest).magnitude()));
-
-//            glVertex3d(a.x, a.y + 0.05, a.z);
-//            glVertex3d(b.x, b.y + 0.05, b.z);
-//            glVertex3d(c.x, c.y + 0.05, c.z);
-//            glVertex3d(closest.x, closest.y, closest.z);
-            //System.out.println(nearest);
+        for (ModelFace face : model.getFaces()) {
+//            if(face.a.toVec3().sub(pos).magnitude() < 3) {
+            planes.add(new CollisionPlane(null, 0, face));
+//            }
         }
 
-//        glColor3d(1, 1, 1);
-//        glEnd();
+        return planes;
+    }
+
+    private void collide(ArrayList<CollisionPlane> planes) {
+        Vec3 pos = new Vec3(tx, ty, tz);
+        Vec3 vel = new Vec3(vx, vy, vz);
+
+        for (CollisionPlane plane : planes) {
+            Vec3 closest = closestPointInTriangle(plane.face.a.toVec3(), plane.face.b.toVec3(), plane.face.c.toVec3(), pos);
+            plane.closestPoint = closest;
+            plane.distance = pos.sub(closest).magnitude();
+        }
 
         Collections.sort(planes); // Sort these planes from closest to farthest, to prevent colliding with invisible edges
 
         // Collide with the nearest plane first
         for (CollisionPlane plane : planes) {
             Vec3 closest = plane.closestPoint;
-            //System.out.println(pos.sub(closest).magnitude());
             if (plane.distance < radius) {
                 Vec3 toPlayer = pos.sub(closest).normalize();
-//                System.out.println(closest);
                 pos = toPlayer.mul(radius - 1e-6).add(closest);
                 if (vel.dot(toPlayer) < 0) {
                     vel = vel.sub(vel.project(pos.sub(closest)));
                 }
-                if (toPlayer.y > 0.7) {
+                if (toPlayer.y > 0.7) { // Cosine of max slope of the plane > 0.7, jumpable
                     onGround = true;
                 }
                 break;
             }
         }
 
-        x = pos.x;
-        y = pos.y;
-        z = pos.z;
+        tx = pos.x;
+        ty = pos.y;
+        tz = pos.z;
 
         vx = vel.x;
         vy = vel.y;
@@ -305,13 +369,31 @@ public class Player implements ITickable {
         this.health += health;
     }
 
-    private class CollisionPlane implements Comparable<CollisionPlane> {
+    public static class CollisionTarget {
+        public enum TargetType {
+            NONE,
+            PLAYER,
+            FACE
+        }
+
+        public TargetType type = TargetType.NONE;
+
+        public Vec3 hitPoint;
+        public double distance = Double.POSITIVE_INFINITY;
+
+        public Player hitPlayer;
+        public ModelFace hitFace;
+    }
+
+    private static class CollisionPlane implements Comparable<CollisionPlane> {
         public Vec3 closestPoint;
         public double distance;
+        public ModelFace face;
 
-        public CollisionPlane(Vec3 closestPoint, double distance) {
+        public CollisionPlane(Vec3 closestPoint, double distance, ModelFace face) {
             this.closestPoint = closestPoint;
             this.distance = distance;
+            this.face = face;
         }
 
         public int compareTo(CollisionPlane other) {
