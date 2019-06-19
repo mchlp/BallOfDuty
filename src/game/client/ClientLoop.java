@@ -1,3 +1,10 @@
+/*
+ *  Author: Henry Gu
+ *  Teacher: Mr. Radulovich
+ *  Date: 2019/6/18
+ *  Course: ICS4U
+ */
+
 package game.client;
 
 import game.client.model.Model;
@@ -18,7 +25,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 public class ClientLoop implements IInputHandler {
     private Renderer renderer;
     private World world;
-    private ClientState state;
     private ClientReceiver receiver;
     private Model mapModel;
     private Model collideModel;
