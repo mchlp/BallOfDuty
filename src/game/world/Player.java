@@ -20,6 +20,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Player implements ITickable {
+    public static final double MAX_AMMUNITION = 4;
+    public static final double MAX_HEALTH = 3;
+    private static int PLAYER_MODEL;
     private double x, y, z;
     private double tx, ty, tz; // Buffering position to prevent jittering
     private double pitch, yaw;
@@ -30,20 +33,53 @@ public class Player implements ITickable {
     private int id;
     private boolean onGround;
     private ClientLoop loop;
-
     private double ammunition = MAX_AMMUNITION;
     private double ammunition_animation = ammunition;
-    public static final double MAX_AMMUNITION = 4;
-
     private double health = MAX_HEALTH;
     private double health_animation = health;
-    public static final double MAX_HEALTH = 3;
-
-    private static int PLAYER_MODEL;
 
     public Player(int id, ClientLoop loop) {
         this.id = id;
         this.loop = loop;
+    }
+
+    private static int genList() {
+        int displayList = glGenLists(1);
+        glNewList(displayList, GL_COMPILE);
+        glBegin(GL_TRIANGLES);
+
+        int i, j;
+        for (i = 0; i <= 20; i++) {
+            double lat0 = Math.PI * (-0.5 + (double) (i - 1) / 20);
+            double z0 = Math.sin(lat0);
+            double zr0 = Math.cos(lat0);
+
+            double lat1 = Math.PI * (-0.5 + (double) i / 20);
+            double z1 = Math.sin(lat1);
+            double zr1 = Math.cos(lat1);
+
+            glBegin(GL_QUAD_STRIP);
+            for (j = 0; j <= 20; j++) {
+                double lng = 2 * Math.PI * (double) (j - 1) / 20;
+                double x = Math.cos(lng);
+                double y = Math.sin(lng);
+
+                glNormal3d(x * zr0, y * zr0, z0);
+                glVertex3d(x * zr0, y * zr0, z0);
+                glNormal3d(x * zr1, y * zr1, z1);
+                glVertex3d(x * zr1, y * zr1, z1);
+            }
+            glEnd();
+        }
+
+        glEnd();
+        glEndList();
+
+        return displayList;
+    }
+
+    public static void init() {
+        PLAYER_MODEL = genList();
     }
 
     public void applyCamera() {
@@ -255,7 +291,8 @@ public class Player implements ITickable {
         double sb = c.sub(b).cross(point.sub(b)).dot(normal);
         double sc = a.sub(c).cross(point.sub(c)).dot(normal);
 
-        return (sa < 0 && sb < 0 && sc < 0) || (sa > 0 && sb > 0 && sc > 0);// Use cross products to determine whether point is inside triangle
+        return (sa < 0 && sb < 0 && sc < 0) || (sa > 0 && sb > 0 && sc > 0);// Use cross products to determine
+        // whether point is inside triangle
     }
 
     public CollisionTarget rayTrace(Vec3 p, Vec3 dir, Collection<Player> players) {
@@ -334,12 +371,14 @@ public class Player implements ITickable {
         Vec3 vel = new Vec3(vx, vy, vz);
 
         for (CollisionPlane plane : planes) {
-            Vec3 closest = closestPointInTriangle(plane.face.a.toVec3(), plane.face.b.toVec3(), plane.face.c.toVec3(), pos);
+            Vec3 closest = closestPointInTriangle(plane.face.a.toVec3(), plane.face.b.toVec3(), plane.face.c.toVec3()
+                    , pos);
             plane.closestPoint = closest;
             plane.distance = pos.sub(closest).magnitude();
         }
 
-        Collections.sort(planes); // Sort these planes from closest to farthest, to prevent colliding with invisible edges
+        Collections.sort(planes); // Sort these planes from closest to farthest, to prevent colliding with invisible
+        // edges
 
         // Collide with the nearest plane first
         for (CollisionPlane plane : planes) {
@@ -370,12 +409,12 @@ public class Player implements ITickable {
         return ammunition;
     }
 
-    public double getAmmunitionAnimation() {
-        return ammunition_animation;
-    }
-
     public void setAmmunition(double ammunition) {
         this.ammunition = ammunition;
+    }
+
+    public double getAmmunitionAnimation() {
+        return ammunition_animation;
     }
 
     public void addAmmunition(double ammunition) {
@@ -386,15 +425,15 @@ public class Player implements ITickable {
         return health;
     }
 
-    public double getHealthAnimation() {
-        return health_animation;
-    }
-
     public void setHealth(double health) {
         this.health = health;
         if (this.health <= 0) {
             death = 300;
         }
+    }
+
+    public double getHealthAnimation() {
+        return health_animation;
     }
 
     public void addHealth(double health) {
@@ -413,38 +452,6 @@ public class Player implements ITickable {
         this.death = death;
     }
 
-    public static class CollisionTarget {
-        public enum TargetType {
-            NONE,
-            PLAYER,
-            FACE
-        }
-
-        public TargetType type = TargetType.NONE;
-
-        public Vec3 hitPoint;
-        public double distance = Double.POSITIVE_INFINITY;
-
-        public Player hitPlayer;
-        public ModelFace hitFace;
-    }
-
-    private static class CollisionPlane implements Comparable<CollisionPlane> {
-        public Vec3 closestPoint;
-        public double distance;
-        public ModelFace face;
-
-        public CollisionPlane(Vec3 closestPoint, double distance, ModelFace face) {
-            this.closestPoint = closestPoint;
-            this.distance = distance;
-            this.face = face;
-        }
-
-        public int compareTo(CollisionPlane other) {
-            return Double.compare(distance, other.distance);
-        }
-    }
-
     private Vec3 closestPointOnLine(Vec3 point, Vec3 linea, Vec3 lineb) {
         Vec3 line = linea.sub(lineb);
 
@@ -461,45 +468,6 @@ public class Player implements ITickable {
         return lineb.sub(frompoint.project(line));
     }
 
-    private static int genList() {
-        int displayList = glGenLists(1);
-        glNewList(displayList, GL_COMPILE);
-        glBegin(GL_TRIANGLES);
-
-        int i, j;
-        for (i = 0; i <= 20; i++) {
-            double lat0 = Math.PI * (-0.5 + (double) (i - 1) / 20);
-            double z0 = Math.sin(lat0);
-            double zr0 = Math.cos(lat0);
-
-            double lat1 = Math.PI * (-0.5 + (double) i / 20);
-            double z1 = Math.sin(lat1);
-            double zr1 = Math.cos(lat1);
-
-            glBegin(GL_QUAD_STRIP);
-            for (j = 0; j <= 20; j++) {
-                double lng = 2 * Math.PI * (double) (j - 1) / 20;
-                double x = Math.cos(lng);
-                double y = Math.sin(lng);
-
-                glNormal3d(x * zr0, y * zr0, z0);
-                glVertex3d(x * zr0, y * zr0, z0);
-                glNormal3d(x * zr1, y * zr1, z1);
-                glVertex3d(x * zr1, y * zr1, z1);
-            }
-            glEnd();
-        }
-
-        glEnd();
-        glEndList();
-
-        return displayList;
-    }
-
-    public static void init() {
-        PLAYER_MODEL = genList();
-    }
-
     public void render() {
         glPushMatrix();
 
@@ -513,5 +481,34 @@ public class Player implements ITickable {
         glCallList(PLAYER_MODEL);
 
         glPopMatrix();
+    }
+
+    public static class CollisionTarget {
+        public TargetType type = TargetType.NONE;
+        public Vec3 hitPoint;
+        public double distance = Double.POSITIVE_INFINITY;
+        public Player hitPlayer;
+        public ModelFace hitFace;
+        public enum TargetType {
+            NONE,
+            PLAYER,
+            FACE
+        }
+    }
+
+    private static class CollisionPlane implements Comparable<CollisionPlane> {
+        public Vec3 closestPoint;
+        public double distance;
+        public ModelFace face;
+
+        public CollisionPlane(Vec3 closestPoint, double distance, ModelFace face) {
+            this.closestPoint = closestPoint;
+            this.distance = distance;
+            this.face = face;
+        }
+
+        public int compareTo(CollisionPlane other) {
+            return Double.compare(distance, other.distance);
+        }
     }
 }

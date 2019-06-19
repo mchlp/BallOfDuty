@@ -17,10 +17,10 @@ import game.world.World;
 
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
-
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
 
 public class ClientLoop implements IInputHandler {
     private Renderer renderer;
@@ -185,9 +185,11 @@ public class ClientLoop implements IInputHandler {
                     double yawCos = -Math.cos(Math.toRadians(getLocalPlayer().getYaw()));
 
                     Vec3 dir = new Vec3(pitchCos * yawSin, pitchSin, pitchCos * yawCos);
-                    Vec3 pos = new Vec3(getLocalPlayer().getX(), getLocalPlayer().getY(), getLocalPlayer().getZ()).add(dir.normalize().mul(getLocalPlayer().getRadius() + 1e-6));
+                    Vec3 pos =
+                            new Vec3(getLocalPlayer().getX(), getLocalPlayer().getY(), getLocalPlayer().getZ()).add(dir.normalize().mul(getLocalPlayer().getRadius() + 1e-6));
 
-                    Player.CollisionTarget target = getLocalPlayer().rayTrace(pos, dir, getWorld().getPlayers().values());
+                    Player.CollisionTarget target = getLocalPlayer().rayTrace(pos, dir,
+                            getWorld().getPlayers().values());
 
                     if (target.type == Player.CollisionTarget.TargetType.PLAYER) {
                         Player p = target.hitPlayer;

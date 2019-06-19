@@ -33,10 +33,6 @@ public class Model {
         this.uvs = new ArrayList<>();
     }
 
-    public void render() {
-        glCallList(displayList);
-    }
-
     public static Model loadOBJ(String objFile, boolean objOnly) {
         String obj;
         try {
@@ -71,30 +67,30 @@ public class Model {
 
                 model.uvs.add(uv);
             } else if (parts[0].equals("f")) {
-                if(!startedDrawing && !objOnly) {
+                if (!startedDrawing && !objOnly) {
                     model.displayList = glGenLists(1);
                     glNewList(model.displayList, GL_COMPILE);
                     startedDrawing = true;
                 }
-                if(!drawing && !objOnly) {
+                if (!drawing && !objOnly) {
                     glBegin(GL_TRIANGLES);
                     drawing = true;
                 }
                 ModelFace f = makeFace(model, parts);
                 f.draw();
             } else if (parts[0].equals("usemtl") && !objOnly) {
-                if(!startedDrawing) {
+                if (!startedDrawing) {
                     model.displayList = glGenLists(1);
                     glNewList(model.displayList, GL_COMPILE);
                     startedDrawing = true;
                 }
-                if(drawing) {
+                if (drawing) {
                     glEnd();
                     drawing = false;
                 }
                 try {
                     model.materials.get(parts[1]).apply();
-                } catch(NullPointerException e) {
+                } catch (NullPointerException e) {
                     System.err.println("Referenced material " + parts[1] + " does not exist");
                 }
             } else if (parts[0].equals("mtllib") && !objOnly) {
@@ -102,11 +98,11 @@ public class Model {
             }
         }
 
-        if(drawing) {
+        if (drawing) {
             glEnd();
         }
 
-        if(startedDrawing) {
+        if (startedDrawing) {
             glEndList();
         }
 
@@ -129,14 +125,14 @@ public class Model {
         Material currMtl = null;
 
         for (String line : lines) {
-        	String[] parts = line.split(" ");
-        	if(parts[0].equals("newmtl")) {
-        	    currMtl = new Material();
-        	    materials.put(parts[1], currMtl);
-            } else if(parts[0].equals("map_Kd")) {
+            String[] parts = line.split(" ");
+            if (parts[0].equals("newmtl")) {
+                currMtl = new Material();
+                materials.put(parts[1], currMtl);
+            } else if (parts[0].equals("map_Kd")) {
                 try {
                     String filename = parts[1];
-                    if(parts[1].equals("-s")) {
+                    if (parts[1].equals("-s")) {
                         filename = parts[5];
                     }
                     Texture texture = Texture.loadTexture(new File(OBJ_DIR, filename));
@@ -144,8 +140,9 @@ public class Model {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if(parts[0].equals("Kd")) {
-        		currMtl.setDiffuseRGB(Double.parseDouble(parts[1]), Double.parseDouble(parts[2]), Double.parseDouble(parts[3]));
+            } else if (parts[0].equals("Kd")) {
+                currMtl.setDiffuseRGB(Double.parseDouble(parts[1]), Double.parseDouble(parts[2]),
+                        Double.parseDouble(parts[3]));
             }
         }
 
@@ -194,6 +191,10 @@ public class Model {
         model.faces.add(face);
 
         return face;
+    }
+
+    public void render() {
+        glCallList(displayList);
     }
 
     @Override

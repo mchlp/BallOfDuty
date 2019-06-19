@@ -41,6 +41,21 @@ public class ClientReceiver extends Receiver {
         isConnected = false;
     }
 
+    public static void main(String[] args) throws IOException, InterruptedException {
+        ClientReceiver clientReceiver = new ClientReceiver(ADDRESS, PORT);
+        clientReceiver.openChannel();
+
+        while (true) {
+            Thread.sleep(500);
+
+            ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
+
+            if (!clientReceiver.isConnected()) {
+                clientReceiver.attemptReconnect();
+            }
+        }
+    }
+
     private void openChannel() {
         isConnected = false;
         try {
@@ -122,21 +137,6 @@ public class ClientReceiver extends Receiver {
 
     public String getClientId() {
         return clientId;
-    }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        ClientReceiver clientReceiver = new ClientReceiver(ADDRESS, PORT);
-        clientReceiver.openChannel();
-
-        while (true) {
-            Thread.sleep(500);
-
-            ArrayList<Packet> receivedPackets = clientReceiver.checkForPackets();
-
-            if (!clientReceiver.isConnected()) {
-                clientReceiver.attemptReconnect();
-            }
-        }
     }
 
 }

@@ -16,58 +16,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
-    public static class Dimension {
-        int width;
-        int height;
-
-        public Dimension(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-
-        public Dimension() {
-            this(0, 0);
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        public double getAspectRatio() {
-            return (double) width / height;
-        }
-
-    }
-
     private static boolean init = false;
-
-    private static void glfwInit() {
-        if (!init) init = true;
-        else return;
-
-        GLFWErrorCallback.createPrint(System.err).set();
-
-        if (!GLFW.glfwInit()) {
-            throw new IllegalStateException("Unable to initialize GLFW");
-        }
-    }
-
-    public static void pollEvents() {
-        glfwPollEvents();
-    }
-
     private final long window;
 
     public Window(String title, int width, int height) {
@@ -92,6 +41,21 @@ public class Window {
 
     public Window() {
         this("");
+    }
+
+    private static void glfwInit() {
+        if (!init) init = true;
+        else return;
+
+        GLFWErrorCallback.createPrint(System.err).set();
+
+        if (!GLFW.glfwInit()) {
+            throw new IllegalStateException("Unable to initialize GLFW");
+        }
+    }
+
+    public static void pollEvents() {
+        glfwPollEvents();
     }
 
     public void setTitle(String title) {
@@ -134,12 +98,12 @@ public class Window {
         return glfwGetKey(window, key);
     }
 
-    public void setCursorLock(boolean locked) {
-        glfwSetInputMode(window, GLFW_CURSOR, locked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-    }
-
     public boolean getCursorLock() {
         return glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
+    }
+
+    public void setCursorLock(boolean locked) {
+        glfwSetInputMode(window, GLFW_CURSOR, locked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
 
     public Dimension getWindowSize() {
@@ -154,5 +118,40 @@ public class Window {
     public void finalize() {
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
+    }
+
+    public static class Dimension {
+        int width;
+        int height;
+
+        public Dimension(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        public Dimension() {
+            this(0, 0);
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public double getAspectRatio() {
+            return (double) width / height;
+        }
+
     }
 }

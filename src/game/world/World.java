@@ -10,9 +10,6 @@ package game.world;
 import game.client.ClientLoop;
 import game.client.model.Model;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class World {
@@ -28,7 +25,7 @@ public class World {
         players = new ConcurrentHashMap<>();
     }
 
-    public void init(Model model, Model collisionModel){
+    public void init(Model model, Model collisionModel) {
         this.model = model;
         this.collisionModel = collisionModel;
     }
@@ -42,12 +39,12 @@ public class World {
         return model;
     }
 
-    public Model getCollisionModel() {
-        return collisionModel;
-    }
-
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    public Model getCollisionModel() {
+        return collisionModel;
     }
 
     public void setCollisionModel(Model model) {
@@ -67,7 +64,7 @@ public class World {
     }
 
     public void renderAllPlayers() {
-        for (Player player : players.values()){
+        for (Player player : players.values()) {
             if (player == localPlayer) {
                 continue;
             }

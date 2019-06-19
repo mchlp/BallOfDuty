@@ -78,7 +78,7 @@ public class ModelFace {
         this.f = f;
     }
 
-    public void draw(){
+    public void draw() {
         if (d != null) d.glTexCoord();
         a.glVertex();
         if (e != null) e.glTexCoord();

@@ -21,12 +21,12 @@ public class ClientProfile {
     private static final int PACKET_HISTORY_LENGTH = 1000;
 
     public final String id;
-    private PacketBodyCoordinate packetBodyCoordinate;
     public final long joined;
     public final String ip;
     public final Queue<Packet> outgoingQueue;
     public final FixedSizeList<PacketHistoryElement> receivedPacketHistory;
     public final FixedSizeList<PacketHistoryElement> sentPacketHistory;
+    private PacketBodyCoordinate packetBodyCoordinate;
 
 
     public ClientProfile(String id, String ip) {
@@ -43,12 +43,12 @@ public class ClientProfile {
         receivedPacketHistory.add(new PacketHistoryElement(packet));
     }
 
-    public void setPacketBodyCoordinate(PacketBodyCoordinate packetBodyCoordinate) {
-        this.packetBodyCoordinate = packetBodyCoordinate;
-    }
-
     public PacketBodyCoordinate getPacketBodyCoordinate() {
         return packetBodyCoordinate;
+    }
+
+    public void setPacketBodyCoordinate(PacketBodyCoordinate packetBodyCoordinate) {
+        this.packetBodyCoordinate = packetBodyCoordinate;
     }
 
     public void addSentPacketToHistory(Packet packet) {

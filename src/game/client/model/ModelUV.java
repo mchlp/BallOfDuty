@@ -37,6 +37,6 @@ public class ModelUV {
     }
 
     public void glTexCoord() {
-        glTexCoord2dv(new double[]{1-v, u});
+        glTexCoord2dv(new double[]{1 - v, u});
     }
 }

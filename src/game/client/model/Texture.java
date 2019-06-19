@@ -17,9 +17,8 @@ import java.util.HashMap;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
-    private int texture;
-
     private static HashMap<File, Texture> textureCache = new HashMap<>();
+    private int texture;
 
     private Texture(int texture) {
         this.texture = texture;
@@ -55,7 +54,8 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufimg.getWidth(), bufimg.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufimg.getWidth(), bufimg.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                buf);
 
         Texture texture = new Texture(textures[0]);
 

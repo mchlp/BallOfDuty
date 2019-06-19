@@ -33,7 +33,8 @@ public class HUD {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         glColor3d(0, 1, 0);
-        drawRing(player.getAmmunitionAnimation(), player.getAmmunition(), Player.MAX_AMMUNITION, 35, 45, 0.8, 0.2, 0.2, windowsize);
+        drawRing(player.getAmmunitionAnimation(), player.getAmmunition(), Player.MAX_AMMUNITION, 35, 45, 0.8, 0.2,
+                0.2, windowsize);
 
         glColor3d(1, 0, 0);
         drawRing(player.getHealthAnimation(), player.getHealth(), Player.MAX_HEALTH, 50, 60, 0.8, 0.2, 0.2, windowsize);
@@ -50,7 +51,8 @@ public class HUD {
         }
     }
 
-    private static void drawRing(double animValue, double trueValue, double maxValue, double inner, double outer, double r, double g, double b, Window.Dimension windowsize) {
+    private static void drawRing(double animValue, double trueValue, double maxValue, double inner, double outer,
+                                 double r, double g, double b, Window.Dimension windowsize) {
         glBegin(GL_QUAD_STRIP);
         for (int i = 0; i <= 1000 * animValue / maxValue; i++) {
             if (i > 1000 * trueValue / maxValue) {
