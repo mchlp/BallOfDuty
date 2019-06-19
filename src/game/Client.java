@@ -11,8 +11,11 @@ import game.client.ClientLoop;
 
 public class Client {
 
+    private static final String ADDRESS = "localhost";
+    private static final int PORT = 8861;
+
     public static void main(String[] args) {
-        ClientLoop loop = new ClientLoop();
+        ClientLoop loop = new ClientLoop(ADDRESS, PORT);
         loop.run();
     }
 

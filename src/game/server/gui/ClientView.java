@@ -47,6 +47,8 @@ public class ClientView extends VBox {
         if (clientProfile == null) {
             getChildren().add(new Text("No client selected"));
         } else {
+
+            // top bar
             HBox topButtonBar = new HBox();
             Button kickButton = new Button("Kick");
             kickButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -58,6 +60,7 @@ public class ClientView extends VBox {
             topButtonBar.getChildren().add(kickButton);
             getChildren().add(topButtonBar);
 
+            // middle area
             Field idField = new Field("Client ID", clientProfile.id);
             Date joinedDate = new Date(clientProfile.joined);
             Field joinedField = new Field("Joined", joinedDate.toString());
@@ -66,6 +69,7 @@ public class ClientView extends VBox {
             lastPacketSentAgoField = new Field("Last Packet Sent", "No packets sent.");
             getChildren().addAll(idField, joinedField, ipField, lastPacketReceivedAgoField, lastPacketSentAgoField);
 
+            // history containers
             VBox packetHistoryContainer = new VBox();
             packetHistoryContainer.setSpacing(5);
             sentPacketHistory = new ClientHistoryContainer("Sent Packet History", clientProfile.sentPacketHistory);

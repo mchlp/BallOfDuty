@@ -18,7 +18,7 @@ import game.network.packets.PacketBodyCoordinate;
  */
 public class ClientProfile {
 
-    private static final int PACKET_HISTORY_LENGTH = 1000;
+    private static final int PACKET_HISTORY_LENGTH = 100;
 
     public final String id;
     public final long joined;

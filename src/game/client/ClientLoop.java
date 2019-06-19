@@ -34,11 +34,11 @@ public class ClientLoop implements IInputHandler {
     private double clx;
     private double cly;
 
-    public ClientLoop() {
+    public ClientLoop(String address, int port) {
         window = new Window("Ball of Duty");
         window.setInputCallback(this);
         renderer = new Renderer(this, window);
-        receiver = new ClientReceiver("localhost", 8861);
+        receiver = new ClientReceiver(address, port);
 
         renderer.init();
 
