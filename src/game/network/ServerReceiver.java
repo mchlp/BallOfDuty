@@ -70,7 +70,6 @@ public class ServerReceiver extends Receiver {
 
     private void register(SelectionKey key, Selector selector, ServerSocketChannel serverSocketChannel) throws IOException {
         String socketId = Integer.toString(clientIDGenerator.nextID());
-        Queue<Packet> outgoingQueue = new Queue<>();
 
         SocketChannel client = serverSocketChannel.accept();
         client.configureBlocking(false);

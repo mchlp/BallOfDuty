@@ -31,7 +31,7 @@ public class Queue<T> {
     }
 
     public T dequeue() {
-        Element popElement = backElement;
+        Element<T> popElement = backElement;
         backElement = backElement.before;
         return (T) popElement.value;
     }
@@ -45,7 +45,7 @@ public class Queue<T> {
             return 0;
         } else {
             int sizeCount = 1;
-            Element cur = backElement;
+            Element<T> cur = backElement;
             while (cur.before != null) {
                 cur = cur.before;
                 sizeCount++;
