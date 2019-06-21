@@ -12,12 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Model {
-
-    public static final String OBJ_DIR = "obj";
 
     private ArrayList<ModelVertex> verticies;
     private ArrayList<ModelFace> faces;
@@ -34,15 +33,17 @@ public class Model {
     }
 
     public static Model loadOBJ(String objFile, boolean objOnly) {
-        String obj;
-        try {
-            obj = new String(Files.readAllBytes(new File(OBJ_DIR, objFile).toPath()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        StringBuilder obj = new StringBuilder();
+        Scanner scanner = new Scanner(Model.class.getClassLoader().getResourceAsStream(objFile));
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if (line == null) {
+                break;
+            }
+            obj.append(line).append("\n");
         }
 
-        obj = obj.replace('\r', '\n');
-        String[] lines = obj.split("\n");
+        String[] lines = obj.toString().split("\n");
 
         Model model = new Model();
 
@@ -110,17 +111,19 @@ public class Model {
     }
 
     private static HashMap<String, Material> loadMTL(String mtlFile) {
-        String mtl;
-        try {
-            mtl = new String(Files.readAllBytes(new File(OBJ_DIR, mtlFile).toPath()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        StringBuilder mtl = new StringBuilder();
+        Scanner scanner = new Scanner(Model.class.getClassLoader().getResourceAsStream(mtlFile));
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if (line == null) {
+                break;
+            }
+            mtl.append(line).append("\n");
         }
 
+        String[] lines = mtl.toString().split("\n");
         HashMap<String, Material> materials = new HashMap<>();
 
-        mtl = mtl.replace('\r', '\n');
-        String[] lines = mtl.split("\n");
 
         Material currMtl = null;
 
@@ -135,7 +138,7 @@ public class Model {
                     if (parts[1].equals("-s")) {
                         filename = parts[5];
                     }
-                    Texture texture = Texture.loadTexture(new File(OBJ_DIR, filename));
+                    Texture texture = Texture.loadTexture(filename);
                     currMtl.setDiffuseMap(texture);
                 } catch (IOException e) {
                     e.printStackTrace();

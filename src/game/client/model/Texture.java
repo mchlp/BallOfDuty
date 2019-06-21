@@ -24,14 +24,14 @@ public class Texture {
         this.texture = texture;
     }
 
-    public static Texture loadTexture(File file) throws IOException {
-        Texture cached = textureCache.get(file);
+    public static Texture loadTexture(String fileName) throws IOException {
+        Texture cached = textureCache.get(fileName);
         if (cached != null) {
             return cached;
         }
 
-        System.out.println("Loading texture: " + file);
-        BufferedImage bufimg = ImageIO.read(file);
+        System.out.println("Loading texture: " + fileName);
+        BufferedImage bufimg = ImageIO.read(Texture.class.getClassLoader().getResourceAsStream(fileName));
 
         ByteBuffer buf = ByteBuffer.allocateDirect(bufimg.getWidth() * bufimg.getHeight() * 4);
         for (int i = 0; i < bufimg.getWidth(); i++) {
@@ -59,7 +59,7 @@ public class Texture {
 
         Texture texture = new Texture(textures[0]);
 
-        textureCache.put(file, texture);
+        textureCache.put(new File(fileName), texture);
 
         return texture;
     }

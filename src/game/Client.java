@@ -15,7 +15,15 @@ public class Client {
     private static final int PORT = 8861;
 
     public static void main(String[] args) {
-        ClientLoop loop = new ClientLoop(ADDRESS, PORT);
+        String address = ADDRESS;
+        int port = PORT;
+        if (args.length > 0) {
+            address = args[0];
+            if (args.length == 2) {
+                port = Integer.parseInt(args[1]);
+            }
+        }
+        ClientLoop loop = new ClientLoop(address, port);
         loop.run();
     }
 

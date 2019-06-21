@@ -29,6 +29,7 @@ public class Server extends Application {
 
     private static final String ADDRESS = "0.0.0.0";
     private static final int PORT = 8861;
+    private static int serverPort;
 
     private static final String NO_CLIENTS_CONNECTED_STRING = "No connected clients.";
     private static final String NO_CLIENT_SELECTED_STRING = "No selected client.";
@@ -39,7 +40,11 @@ public class Server extends Application {
     private ClientView clientView;
     private String selectedClient;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        serverPort = PORT;
+        if (args.length > 0) {
+            serverPort = Integer.parseInt(args[0]);
+        }
         launch(args);
     }
 
@@ -47,7 +52,7 @@ public class Server extends Application {
     public void start(Stage primaryStage) {
 
         try {
-            serverProcessor = new ServerProcessor(ADDRESS, PORT);
+            serverProcessor = new ServerProcessor(ADDRESS, serverPort);
             selectedClient = NO_CLIENT_SELECTED_STRING;
 
             BorderPane root = new BorderPane();
